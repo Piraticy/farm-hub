@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees Management</title>
+    <!-- Tailwind CSS for a clean, modern look -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for the Inter font and a smooth theme transition */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Default light mode colors */
+            background-color: #f7fdee;
+            color: #1a202c;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Active tab style - now handles both light and dark mode colors */
+        .tab-active {
+            color: #4c4639;
+            background-color: #e3ffe5;
+            font-weight: 600;
+        }
+
+        /*
+            DARK MODE STYLES
+            These styles override the default light mode ones when the 'dark-mode' class is applied to the body.
+            The specificity is increased (body.dark-mode) to ensure these rules win.
+        */
+        body.dark-mode {
+            background-color: #1a202c; /* A deep, dark gray */
+            color: #e2e8f0; /* A light, off-white for text */
+        }
+        
+        body.dark-mode .bg-white {
+            background-color: #2d3748; /* Darker background for cards */
+        }
+        
+        body.dark-mode .bg-yellow-100 {
+            background-color: #4a5568; /* A muted dark yellow for the alert box */
+            color: #a0aec0;
+        }
+
+        body.dark-mode .text-gray-700 {
+            color: #e2e8f0; /* Lighter color for headings and bold text */
+        }
+        
+        body.dark-mode .text-gray-600 {
+            color: #a0aec0; /* Lighter gray for secondary text */
+        }
+
+        body.dark-mode .text-gray-900 {
+            color: #e2e8f0; /* Lighter text for table data */
+        }
+
+        body.dark-mode .bg-gray-50 {
+            background-color: #1a202c; /* Matches body background for table header */
+        }
+
+        body.dark-mode .divide-gray-200 {
+            border-color: #4a5568; /* Darker divider lines */
+        }
+        
+        body.dark-mode .hover\:bg-gray-100:hover,
+        body.dark-mode .tab-active:hover {
+            background-color: #4a5568; /* Consistent hover effect in dark mode */
+        }
+
+        body.dark-mode .text-lime-800 {
+            color: #d1d5db; /* A lighter gray for contrast on dark backgrounds */
+        }
+
+        body.dark-mode .tab-active {
+            background-color: #4a5568; /* Darker background for the active tab */
+            color: #d1d5db;
+        }
+        
+        body.dark-mode .text-green-600 {
+            color: #68d391; /* A lighter green for dark mode */
+        }
+        
+        body.dark-mode .bg-green-600 {
+            background-color: #3b916c; /* A nice dark green for download button */
+        }
+
+        body.dark-mode .text-blue-600 {
+            color: #68b5e8;
+        }
+
+        body.dark-mode .bg-blue-600 {
+            background-color: #4b89cc;
+        }
+        
+        body.dark-mode input,
+        body.dark-mode select {
+            background-color: #2d3748; /* Dark background for form inputs */
+            border-color: #4a5568; /* Muted border color */
+            color: #e2e8f0; /* Light text color in inputs */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm py-8">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-700">Employees Management</h1>
+                <p class="text-gray-600 mt-2">View, add, and manage your farm's employees.</p>
+            </div>
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" class="p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
+                <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- User ID and Authentication Status -->
+        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
+            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
+            <div id="authStatus" class="mt-1"></div>
+        </div>
+
+        <!-- Dashboard Navigation Tabs -->
+        <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
+            <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="crops.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
+                <span>Crops</span>
+            </a>
+            <a href="animals.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Animals</span>
+            </a>
+            <!-- Removed conflicting classes from the active tab and added a consistent color for the icon -->
+            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active text-lime-800">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Employees</span>
+            </a>
+            <a href="customers.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Customers</span>
+            </a>
+            <a href="finances.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 0 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
+                <span>Finances</span>
+            </a>
+            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                <span>Inventory</span>
+            </a>
+        </div>
+
+        <!-- The 'open' attribute was removed from the <details> tag to make it closed by default. -->
+        <details class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <summary class="flex justify-between items-center cursor-pointer text-2xl font-semibold text-gray-800 mb-4 focus:outline-none">
+                <span>Add New Employee</span>
+                <svg class="w-6 h-6 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </summary>
+            <form id="addEmployeeForm" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
+                    <select id="position" name="position" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                        <option value="" disabled selected>Select a position</option>
+                        <option value="CEO">CEO</option>
+                        <option value="Director">Director</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Farmhand">Farmhand</option>
+                        <option value="Tractor Operator">Tractor Operator</option>
+                        <option value="Animal Caretaker">Animal Caretaker</option>
+                        <option value="General Laborer">General Laborer</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="hireDate" class="block text-sm font-medium text-gray-700">Hire Date</label>
+                    <input type="date" id="hireDate" name="hireDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="placeOfBirth" class="block text-sm font-medium text-gray-700">Place of Birth</label>
+                    <input type="text" id="placeOfBirth" name="placeOfBirth" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="currentLivingLocation" class="block text-sm font-medium text-gray-700">Current Living Location</label>
+                    <input type="text" id="currentLivingLocation" name="currentLivingLocation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Add Employee</button>
+            </form>
+        </details>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Current Employees</h2>
+                <button id="downloadBtn" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">Download Data</button>
+            </div>
+            <div id="employeesTableContainer" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hire Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Place of Birth</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Living Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeesTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Employee data will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="loadingMessage" class="text-center text-gray-500 mt-4">Loading employees...</div>
+            <div id="noEmployeesMessage" class="hidden text-center text-gray-500 mt-4">No employees found. Add one above!</div>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDKs and custom JavaScript -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase configuration provided by the Canvas environment
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase services
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Get DOM elements
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const authStatus = document.getElementById('authStatus');
+        const addEmployeeForm = document.getElementById('addEmployeeForm');
+        const employeesTableBody = document.getElementById('employeesTableBody');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const noEmployeesMessage = document.getElementById('noEmployeesMessage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+
+        let currentUserId = null;
+        let allEmployeesData = []; // Store the fetched data for the download function
+
+        // Function to handle authentication
+        const authenticate = async () => {
+            try {
+                if (initialAuthToken) {
+                    // Sign in with the provided custom token
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    authStatus.textContent = 'Signed in with custom token.';
+                } else {
+                    // Sign in anonymously if no token is available
+                    await signInAnonymously(auth);
+                    authStatus.textContent = 'Signed in anonymously.';
+                }
+            } catch (error) {
+                console.error("Authentication Error:", error);
+                authStatus.textContent = 'Authentication failed. Please try again.';
+            }
+        };
+
+        // Listen for authentication state changes to get the user ID
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                userIdDisplay.textContent = currentUserId;
+                setupEmployeesListener(); // Set up the data listener once authenticated
+            } else {
+                currentUserId = null;
+                userIdDisplay.textContent = 'Not authenticated (using temp ID)';
+                authStatus.textContent = 'Please sign in.';
+                // We still set up a listener even if not authenticated, but data will not be persisted.
+                currentUserId = crypto.randomUUID();
+                setupEmployeesListener();
+            }
+        });
+
+        // Function to set up the real-time listener for employee data from Firestore
+        const setupEmployeesListener = () => {
+            // Check if user ID is ready before setting up the listener
+            if (!currentUserId) {
+                return;
+            }
+
+            // Define the collection path for public data
+            const employeesCollectionRef = collection(db, `artifacts/${appId}/public/data/employees`);
+
+            // Use onSnapshot for real-time updates
+            onSnapshot(employeesCollectionRef, (snapshot) => {
+                const employees = [];
+                snapshot.forEach((doc) => {
+                    employees.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort employees by name for consistent display
+                employees.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                allEmployeesData = employees; // Store the data for the download function
+                renderEmployeesTable(employees);
+            }, (error) => {
+                console.error("Error fetching employees:", error);
+                loadingMessage.textContent = 'Error loading employees. Please try again.';
+            });
+        };
+
+        // Function to render employee data in the HTML table
+        const renderEmployeesTable = (employees) => {
+            employeesTableBody.innerHTML = ''; // Clear existing table rows
+            loadingMessage.classList.add('hidden');
+
+            if (employees.length === 0) {
+                noEmployeesMessage.classList.remove('hidden');
+            } else {
+                noEmployeesMessage.classList.add('hidden');
+                employees.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-100 transition-colors duration-150';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${employee.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.position || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.hireDate || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.dateOfBirth || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.placeOfBirth || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.currentLivingLocation || 'N/A'}</td>
+                    `;
+                    employeesTableBody.appendChild(row);
+                });
+            }
+        };
+
+        // Function to download data as a CSV file
+        const downloadCSV = (data) => {
+            if (!data || data.length === 0) {
+                return;
+            }
+
+            const headers = ["Name", "Position", "Hire Date", "Date of Birth", "Place of Birth", "Living Location"];
+            const headerRow = headers.join(',');
+
+            const csvRows = data.map(employee => {
+                const row = [
+                    `"${employee.name || ''}"`,
+                    `"${employee.position || ''}"`,
+                    `"${employee.hireDate || ''}"`,
+                    `"${employee.dateOfBirth || ''}"`,
+                    `"${employee.placeOfBirth || ''}"`,
+                    `"${employee.currentLivingLocation || ''}"`
+                ].join(',');
+                return row;
+            });
+
+            const csvContent = [headerRow, ...csvRows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'employees_data.csv');
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        };
+
+        // Event listener for the download button
+        downloadBtn.addEventListener('click', () => {
+            downloadCSV(allEmployeesData);
+        });
+
+        // Handle form submission to add a new employee
+        addEmployeeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const employeeData = {
+                name: form.name.value,
+                position: form.position.value,
+                hireDate: form.hireDate.value,
+                dateOfBirth: form.dateOfBirth.value,
+                placeOfBirth: form.placeOfBirth.value,
+                currentLivingLocation: form.currentLivingLocation.value,
+                // Add the user ID to the document for ownership tracking
+                addedBy: currentUserId
+            };
+
+            try {
+                const employeesCollectionRef = collection(db, `artifacts/${appId}/public/data/employees`);
+                await addDoc(employeesCollectionRef, employeeData);
+                form.reset(); // Clear the form after successful submission
+            } catch (error) {
+                console.error("Error adding employee:", error);
+                // You could add a simple message box here for the user
+            }
+        });
+
+        // --- Theme Toggle Functionality ---
+        const applyTheme = (theme) => {
+            const body = document.body;
+            // Set the theme on the body
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+
+            // Update the icon visibility
+            if (body.classList.contains('dark-mode')) {
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            } else {
+                moonIcon.classList.remove('hidden');
+                sunIcon.classList.add('hidden');
+            }
+        };
+        
+        // Add event listener to the toggle button
+        themeToggleBtn.addEventListener('click', () => {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const newTheme = isDarkMode ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Check for saved theme preference in local storage on page load
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // Default to light theme if no preference is saved
+            applyTheme('light');
+        }
+
+        // Start the authentication process on page load
+        window.onload = authenticate;
+    </script>
+</body>
+</html>

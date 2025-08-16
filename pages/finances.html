@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finances Management</title>
+    <!-- Tailwind CSS for a clean, modern look -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .details-summary-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        details[open] .details-summary-icon {
+            transform: rotate(180deg);
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        .tab-active {
+            @apply text-lime-800 bg-lime-100 font-semibold;
+        }
+
+        /* Dark mode colors */
+        body.dark-mode {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        .dark-mode .bg-white {
+            background-color: #2d3748;
+        }
+        .dark-mode .bg-lime-50 {
+            background-color: #1a202c;
+        }
+        .dark-mode .bg-yellow-100 {
+            background-color: #4a5568;
+            color: #a0aec0;
+        }
+        .dark-mode .text-lime-800 {
+            color: #d1d5db; /* Light gray for contrast */
+        }
+        .dark-mode .tab-active {
+            background-color: #4a5568;
+            color: #d1d5db;
+        }
+        .dark-mode .hover\\:bg-gray-100:hover {
+            background-color: #4a5568;
+        }
+        .dark-mode .text-gray-600 {
+            color: #a0aec0;
+        }
+        .dark-mode .text-green-700 {
+            color: #68d391; /* A lighter green for dark mode */
+        }
+        .dark-mode .text-gray-700 {
+            color: #e2e8f0;
+        }
+        .dark-mode .text-green-600 {
+            color: #68d391;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold text-gray-700">Finances Management</h1>
+            <p class="text-gray-600 mt-2">View, add, and manage your farm's finances.</p>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- User ID and Authentication Status -->
+        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
+            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
+            <div id="authStatus" class="mt-1"></div>
+        </div>
+
+        <!-- Dashboard Navigation Tabs -->
+        <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
+            <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="crops.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
+                <span>Crops</span>
+            </a>
+            <a href="animals.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Animals</span>
+            </a>
+            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Employees</span>
+            </a>
+            <a href="customers.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span>Customers</span>
+            </a>
+            <a href="finances.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active text-blue-600 bg-gray-100 font-semibold">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
+                <span>Finances</span>
+            </a>
+            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                <span>Inventory</span>
+            </a>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-medium text-gray-500">Total Income</h3>
+                <p id="totalIncome" class="mt-1 text-3xl font-semibold text-green-600">$0.00</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-medium text-gray-500">Total Expenses</h3>
+                <p id="totalExpenses" class="mt-1 text-3xl font-semibold text-red-600">$0.00</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-medium text-gray-500">Net Balance</h3>
+                <p id="netBalance" class="mt-1 text-3xl font-semibold text-gray-900">$0.00</p>
+            </div>
+        </div>
+
+        <!-- Add New Transaction Section -->
+        <details class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <summary class="flex justify-between items-center cursor-pointer text-2xl font-semibold text-gray-800 mb-4 focus:outline-none">
+                <span>Add New Transaction</span>
+                <svg class="details-summary-icon w-6 h-6 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </summary>
+            <form id="addTransactionForm" class="space-y-4">
+                <div>
+                    <label for="transactionType" class="block text-sm font-medium text-gray-700">Type</label>
+                    <select id="transactionType" name="transactionType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                        <option value="" disabled selected>Select type...</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+                <!-- Income Fields -->
+                <div id="incomeFieldsContainer" class="hidden space-y-4">
+                    <div>
+                        <label for="incomeSource" class="block text-sm font-medium text-gray-700">Source</label>
+                        <select id="incomeSource" name="incomeSource" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                            <option value="" disabled selected>Select source...</option>
+                            <option value="Crops">Crops</option>
+                            <option value="Animals">Animals</option>
+                            <option value="Loan">Loan</option>
+                            <option value="Investment">Investment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div id="relatedIncomeItemContainer" class="hidden">
+                        <label for="relatedIncomeItem" class="block text-sm font-medium text-gray-700">Related Item</label>
+                        <select id="relatedIncomeItem" name="relatedIncomeItem" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></select>
+                    </div>
+                </div>
+
+                <!-- Expense Fields -->
+                <div id="expenseFieldsContainer" class="hidden space-y-4">
+                    <div>
+                        <label for="expenseCategory" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="expenseCategory" name="expenseCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                            <option value="" disabled selected>Select category...</option>
+                            <option value="Labor">Labor</option>
+                            <option value="Supplies">Supplies</option>
+                            <option value="Fuel">Fuel</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div id="relatedExpenseItemContainer" class="hidden">
+                        <label for="relatedExpenseItem" class="block text-sm font-medium text-gray-700">Related Inventory Item</label>
+                        <select id="relatedExpenseItem" name="relatedExpenseItem" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></select>
+                    </div>
+                </div>
+                
+                <!-- Common fields for all transactions -->
+                <div>
+                    <label for="transactionDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="transactionDate" name="transactionDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="transactionDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                    <input type="text" id="transactionDescription" name="transactionDescription" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <div>
+                    <label for="transactionAmount" class="block text-sm font-medium text-gray-700">Amount ($)</label>
+                    <input type="number" step="0.01" id="transactionAmount" name="transactionAmount" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                </div>
+                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Add Transaction</button>
+                <div id="statusMessage" class="mt-2 text-sm text-center"></div>
+            </form>
+        </details>
+
+        <!-- Current Transactions Table Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Recent Transactions</h2>
+                <button id="downloadBtn" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">Download Data</button>
+            </div>
+            <div id="transactionsTableContainer" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Related Item</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th scope="col" class="relative px-6 py-3"><span class="sr-only">Delete</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Transaction data will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="loadingMessage" class="flex items-center justify-center space-x-2 text-center text-gray-500 mt-4">
+                <svg class="spinner w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Loading transactions...</span>
+            </div>
+            <div id="noTransactionsMessage" class="hidden text-center text-gray-500 mt-4">No transactions found. Add one above!</div>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, onSnapshot, collection, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Firebase configuration and app ID are globally provided
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Check if firebase config is available
+        if (!firebaseConfig || !firebaseConfig.projectId) {
+            console.error("Firebase configuration is missing. The app will not be able to connect to the database. Dynamic fields should still function.");
+            document.getElementById('authStatus').textContent = 'Firebase is not configured. Data persistence is disabled.';
+        } else {
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+
+            const userIdDisplay = document.getElementById('userIdDisplay');
+            const authStatus = document.getElementById('authStatus');
+            const addTransactionForm = document.getElementById('addTransactionForm');
+            const transactionsTableBody = document.getElementById('transactionsTableBody');
+            const totalIncomeEl = document.getElementById('totalIncome');
+            const totalExpensesEl = document.getElementById('totalExpenses');
+            const netBalanceEl = document.getElementById('netBalance');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const noTransactionsMessage = document.getElementById('noTransactionsMessage');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const statusMessage = document.getElementById('statusMessage');
+
+            const transactionTypeEl = document.getElementById('transactionType');
+            const transactionDateEl = document.getElementById('transactionDate');
+            const transactionDescriptionEl = document.getElementById('transactionDescription');
+            const transactionAmountEl = document.getElementById('transactionAmount');
+
+            const incomeFieldsContainerEl = document.getElementById('incomeFieldsContainer');
+            const expenseFieldsContainerEl = document.getElementById('expenseFieldsContainer');
+            const relatedIncomeItemEl = document.getElementById('relatedIncomeItem');
+            const relatedIncomeItemContainerEl = document.getElementById('relatedIncomeItemContainer');
+            const incomeSourceEl = document.getElementById('incomeSource');
+            const expenseCategoryEl = document.getElementById('expenseCategory');
+            const relatedExpenseItemEl = document.getElementById('relatedExpenseItem');
+            const relatedExpenseItemContainerEl = document.getElementById('relatedExpenseItemContainer');
+
+            let currentUserId = null;
+            let allTransactionsData = [];
+            let cropsData = [];
+            let animalsData = [];
+            let inventoryData = [];
+            let isDataLoaded = { crops: false, animals: false, inventory: false };
+
+            // Function to handle authentication and update UI
+            const authenticate = async () => {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        authStatus.textContent = 'Signed in with custom token.';
+                    } else {
+                        await signInAnonymously(auth);
+                        authStatus.textContent = 'Signed in anonymously.';
+                    }
+                } catch (error) {
+                    console.error("Authentication Error:", error);
+                    authStatus.textContent = 'Authentication failed. Please try again.';
+                }
+            };
+
+            // Listen for authentication state changes
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    userIdDisplay.textContent = currentUserId;
+                    setupDataListeners();
+                    // Call this after authentication is confirmed to ensure the form state is correct
+                    updateDynamicFields(); 
+                } else {
+                    currentUserId = null;
+                    userIdDisplay.textContent = 'Not authenticated';
+                    authStatus.textContent = 'Please sign in.';
+                    currentUserId = crypto.randomUUID();
+                    userIdDisplay.textContent = 'Not authenticated (using temp ID)';
+                    setupDataListeners();
+                    // Call this after authentication is confirmed to ensure the form state is correct
+                    updateDynamicFields();
+                }
+            });
+
+            // Function to set up real-time listeners for all necessary data
+            const setupDataListeners = () => {
+                if (!currentUserId) {
+                    return;
+                }
+
+                // Listen for transactions
+                const transactionsCollectionRef = collection(db, `artifacts/${appId}/public/data/finances`);
+                onSnapshot(transactionsCollectionRef, (snapshot) => {
+                    const transactions = [];
+                    let totalIncome = 0;
+                    let totalExpenses = 0;
+
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        transactions.push({ id: doc.id, ...data });
+
+                        const amount = parseFloat(data.transactionAmount);
+                        if (data.transactionType === 'Income') {
+                            totalIncome += amount;
+                        } else if (data.transactionType === 'Expense') {
+                            totalExpenses += amount;
+                        }
+                    });
+
+                    allTransactionsData = transactions;
+                    allTransactionsData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    renderTransactionsTable(allTransactionsData);
+                    updateSummary(totalIncome, totalExpenses);
+                    loadingMessage.classList.add('hidden');
+                }, (error) => {
+                    console.error("Error fetching transactions:", error);
+                    loadingMessage.textContent = 'Error loading transactions. Please try again.';
+                });
+
+                // Listen for crops
+                const cropsCollectionRef = collection(db, `artifacts/${appId}/public/data/crops`);
+                onSnapshot(cropsCollectionRef, (snapshot) => {
+                    cropsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    isDataLoaded.crops = true;
+                    checkAllDataLoaded();
+                });
+
+                // Listen for animals
+                const animalsCollectionRef = collection(db, `artifacts/${appId}/public/data/animals`);
+                onSnapshot(animalsCollectionRef, (snapshot) => {
+                    animalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    isDataLoaded.animals = true;
+                    checkAllDataLoaded();
+                });
+
+                // Listen for inventory
+                const inventoryCollectionRef = collection(db, `artifacts/${appId}/public/data/inventory`);
+                onSnapshot(inventoryCollectionRef, (snapshot) => {
+                    inventoryData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    isDataLoaded.inventory = true;
+                    checkAllDataLoaded();
+                });
+            };
+            
+            // Function to reset all form fields to a clean state
+            const resetForm = () => {
+                console.log('Resetting form...');
+                addTransactionForm.reset();
+                incomeFieldsContainerEl.classList.add('hidden');
+                expenseFieldsContainerEl.classList.add('hidden');
+                relatedIncomeItemContainerEl.classList.add('hidden');
+                relatedExpenseItemContainerEl.classList.add('hidden');
+            }
+
+            // Function to update the form fields based on transaction type
+            const updateDynamicFields = () => {
+                const type = transactionTypeEl.value;
+                console.log(`Transaction type changed to: ${type}. Toggling visibility.`);
+                
+                // Explicitly show or hide the main containers
+                if (type === 'Income') {
+                    incomeFieldsContainerEl.classList.remove('hidden');
+                    expenseFieldsContainerEl.classList.add('hidden');
+                    if (transactionDescriptionEl) {
+                         transactionDescriptionEl.value = 'Income from a successful sale.';
+                    }
+                    console.log('Income fields are now visible.');
+                } else if (type === 'Expense') {
+                    incomeFieldsContainerEl.classList.add('hidden');
+                    expenseFieldsContainerEl.classList.remove('hidden');
+                     if (transactionDescriptionEl) {
+                        transactionDescriptionEl.value = 'Expense for farm supplies.';
+                     }
+                    console.log('Expense fields are now visible.');
+                } else {
+                    // Hide both if the "Select type..." option is chosen
+                    incomeFieldsContainerEl.classList.add('hidden');
+                    expenseFieldsContainerEl.classList.add('hidden');
+                    console.log('All dynamic fields are now hidden.');
+                }
+
+                // Also, reset related item dropdowns
+                if (relatedIncomeItemEl) {
+                    relatedIncomeItemEl.innerHTML = '<option value="" disabled selected>Select item...</option>';
+                    relatedIncomeItemContainerEl.classList.add('hidden');
+                }
+                if (relatedExpenseItemEl) {
+                    relatedExpenseItemEl.innerHTML = '<option value="" disabled selected>Select item...</option>';
+                    relatedExpenseItemContainerEl.classList.add('hidden');
+                }
+            };
+
+            // Function to populate related item dropdowns
+            const populateRelatedItems = (source, element, data) => {
+                console.log(`Populating related items for source: ${source}. Data length: ${data.length}`);
+                if (!element) return;
+                element.innerHTML = '<option value="" disabled selected>Select item...</option>';
+                if (data && data.length > 0) {
+                    const container = element.closest('div');
+                    if (container) container.classList.remove('hidden');
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.cropName || item.animalName || item.itemName;
+                        option.textContent = option.value;
+                        element.appendChild(option);
+                    });
+                } else {
+                    const container = element.closest('div');
+                    if (container) container.classList.add('hidden');
+                }
+            };
+
+            // Listen for changes on the main transaction type dropdown
+            if (transactionTypeEl) {
+                transactionTypeEl.addEventListener('change', updateDynamicFields);
+            }
+
+            // Listen for changes on the income source dropdown
+            if (incomeSourceEl) {
+                incomeSourceEl.addEventListener('change', () => {
+                    const source = incomeSourceEl.value;
+                    if (source === 'Crops') {
+                        populateRelatedItems(source, relatedIncomeItemEl, cropsData);
+                    } else if (source === 'Animals') {
+                        populateRelatedItems(source, relatedIncomeItemEl, animalsData);
+                    } else {
+                        if (relatedIncomeItemContainerEl) relatedIncomeItemContainerEl.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Listen for changes on the expense category dropdown
+            if (expenseCategoryEl) {
+                expenseCategoryEl.addEventListener('change', () => {
+                    const category = expenseCategoryEl.value;
+                    if (category === 'Supplies') {
+                        populateRelatedItems(category, relatedExpenseItemEl, inventoryData);
+                    } else {
+                        if (relatedExpenseItemContainerEl) relatedExpenseItemContainerEl.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Function to render transactions in the table
+            const renderTransactionsTable = (transactions) => {
+                if (!transactionsTableBody) return;
+                transactionsTableBody.innerHTML = '';
+                
+                if (transactions.length === 0) {
+                    if (noTransactionsMessage) noTransactionsMessage.classList.remove('hidden');
+                } else {
+                    if (noTransactionsMessage) noTransactionsMessage.classList.add('hidden');
+                    transactions.forEach(transaction => {
+                        const amountClass = transaction.transactionType === 'Income' ? 'text-green-600' : 'text-red-600';
+                        const amountSign = transaction.transactionType === 'Income' ? '+' : '-';
+                        let relatedItemText = 'N/A';
+                        if (transaction.relatedSource && transaction.relatedItem) {
+                            relatedItemText = `${transaction.relatedSource}: ${transaction.relatedItem}`;
+                        } else if (transaction.relatedSource) {
+                            relatedItemText = transaction.relatedSource;
+                        }
+
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-100 transition-colors duration-150';
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${transaction.transactionType || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${relatedItemText}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.transactionDate || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.transactionDescription || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${amountClass}">
+                                ${amountSign}${parseFloat(transaction.transactionAmount).toFixed(2) || '0.00'}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-red-600 hover:text-red-900 transition-colors duration-200" data-id="${transaction.id}">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </td>
+                        `;
+                        transactionsTableBody.appendChild(row);
+                    });
+                }
+            };
+
+            // Function to update the summary cards
+            const updateSummary = (income, expenses) => {
+                const net = income - expenses;
+                if (totalIncomeEl) totalIncomeEl.textContent = `$${income.toFixed(2)}`;
+                if (totalExpensesEl) totalExpensesEl.textContent = `$${expenses.toFixed(2)}`;
+                if (netBalanceEl) {
+                    netBalanceEl.textContent = `$${net.toFixed(2)}`;
+                    netBalanceEl.className = `mt-1 text-3xl font-semibold ${net >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                }
+            };
+
+            // Function to download data as CSV
+            const downloadCSV = (data) => {
+                if (!data || data.length === 0) {
+                    return;
+                }
+
+                const headers = ["Type", "Source", "Related Item", "Date", "Description", "Amount"];
+                const headerRow = headers.join(',');
+                
+                const csvRows = data.map(item => {
+                    const row = [
+                        `"${item.transactionType || ''}"`,
+                        `"${item.relatedSource || ''}"`,
+                        `"${item.relatedItem || ''}"`,
+                        `"${item.transactionDate || ''}"`,
+                        `"${item.transactionDescription || ''}"`,
+                        `"${parseFloat(item.transactionAmount).toFixed(2) || '0.00'}"`
+                    ].join(',');
+                    return row;
+                });
+
+                const csvContent = [headerRow, ...csvRows].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'finances_data.csv');
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
+            // Event listener for the download button
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', () => {
+                    downloadCSV(allTransactionsData);
+                });
+            }
+
+            // Handle form submission to add a new transaction
+            if (addTransactionForm) {
+                addTransactionForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const type = form.transactionType.value;
+                    let relatedSource = '';
+                    let relatedItem = '';
+
+                    // Check for dynamically created fields
+                    if (type === 'Income') {
+                        relatedSource = form.incomeSource.value;
+                        relatedItem = form.relatedIncomeItem ? form.relatedIncomeItem.value : '';
+                    } else if (type === 'Expense') {
+                        relatedSource = form.expenseCategory.value;
+                        relatedItem = form.relatedExpenseItem ? form.relatedExpenseItem.value : '';
+                    }
+
+                    const transactionData = {
+                        transactionType: type,
+                        relatedSource: relatedSource,
+                        relatedItem: relatedItem,
+                        transactionDate: form.transactionDate.value,
+                        transactionDescription: form.transactionDescription.value,
+                        transactionAmount: parseFloat(form.transactionAmount.value),
+                        addedBy: currentUserId,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    try {
+                        const transactionsCollectionRef = collection(db, `artifacts/${appId}/public/data/finances`);
+                        await addDoc(transactionsCollectionRef, transactionData);
+                        
+                        // Manually reset the form fields to a clean state
+                        resetForm();
+
+                        if (statusMessage) {
+                            statusMessage.textContent = '✅ Transaction added successfully!';
+                            statusMessage.className = 'mt-2 text-sm text-center text-green-600';
+                        }
+                    } catch (error) {
+                        console.error("Error adding transaction:", error);
+                        if (statusMessage) {
+                            statusMessage.textContent = '❌ Error adding transaction.';
+                            statusMessage.className = 'mt-2 text-sm text-center text-red-600';
+                        }
+                    }
+                    setTimeout(() => {
+                        if (statusMessage) {
+                            statusMessage.textContent = '';
+                            statusMessage.className = 'mt-2 text-sm text-center';
+                        }
+                    }, 3000);
+                });
+            }
+
+            // Handle deletion of a transaction
+            if (transactionsTableBody) {
+                transactionsTableBody.addEventListener('click', async (e) => {
+                    const deleteButton = e.target.closest('button');
+                    if (deleteButton) {
+                        const docId = deleteButton.dataset.id;
+                        if (docId) {
+                            try {
+                                const transactionDocRef = doc(db, `artifacts/${appId}/public/data/finances`, docId);
+                                await deleteDoc(transactionDocRef);
+                            } catch (error) {
+                                console.error("Error deleting document:", error);
+                            }
+                        }
+                    }
+                });
+            }
+            // Function to check if all necessary data is loaded
+            const checkAllDataLoaded = () => {
+                if (Object.values(isDataLoaded).every(status => status === true)) {
+                    // All data loaded, now you can safely populate dropdowns if needed.
+                    console.log("All related data (crops, animals, inventory) has been loaded.");
+                    // No need to call updateDynamicFields here as it's already called on auth state change
+                }
+            };
+
+            // We use DOMContentLoaded to ensure the script runs after the DOM is fully parsed
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log("DOM content fully loaded. Starting authentication and form setup.");
+                authenticate();
+                resetForm(); // Reset form to initial state on load
+                // The updateDynamicFields listener is now set up in onAuthStateChanged
+            });
+        }
+    </script>
+</body>
+</html>
