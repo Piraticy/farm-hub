@@ -56,12 +56,6 @@
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-8">
 
-        <!-- User ID and Authentication Status -->
-        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
-            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
-            <div id="authStatus" class="mt-1"></div>
-        </div>
-
         <!-- Dashboard Navigation Tabs -->
         <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
@@ -169,95 +163,26 @@
 
     </main>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, onSnapshot, collection, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Data is stored locally in this browser (localStorage) -->
+    <script>
+        const STORAGE_KEY = 'farmhub_inventory';
+        const loadInventory = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const saveInventory = (inventory) => localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
 
-        // Firebase configuration and app ID are globally provided
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const authStatus = document.getElementById('authStatus');
         const addItemForm = document.getElementById('addItemForm');
         const inventoryTableBody = document.getElementById('inventoryTableBody');
         const loadingMessage = document.getElementById('loadingMessage');
         const noInventoryMessage = document.getElementById('noInventoryMessage');
         const downloadBtn = document.getElementById('downloadBtn');
         const statusMessage = document.getElementById('statusMessage');
-        let currentUserId = null;
-        let allInventoryData = []; // Store the fetched data for download
 
-        // Function to handle authentication and update UI
-        const authenticate = async () => {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    authStatus.textContent = 'Signed in with custom token.';
-                } else {
-                    await signInAnonymously(auth);
-                    authStatus.textContent = 'Signed in anonymously.';
-                }
-            } catch (error) {
-                console.error("Authentication Error:", error);
-                authStatus.textContent = 'Authentication failed. Please try again.';
-            }
-        };
-
-        // Listen for authentication state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userIdDisplay.textContent = currentUserId;
-                setupInventoryListener();
-            } else {
-                currentUserId = null;
-                userIdDisplay.textContent = 'Not authenticated';
-                authStatus.textContent = 'Please sign in.';
-                currentUserId = crypto.randomUUID();
-                userIdDisplay.textContent = 'Not authenticated (using temp ID)';
-                setupInventoryListener();
-            }
-        });
-
-        // Function to set up the real-time listener for inventory
-        const setupInventoryListener = () => {
-            if (!currentUserId) {
-                return;
-            }
-
-            const inventoryCollectionRef = collection(db, `artifacts/${appId}/public/data/inventory`);
-            loadingMessage.classList.remove('hidden');
-
-            onSnapshot(inventoryCollectionRef, (snapshot) => {
-                const inventory = [];
-                snapshot.forEach((doc) => {
-                    inventory.push({ id: doc.id, ...doc.data() });
-                });
-                
-                inventory.sort((a, b) => (a.itemName || '').localeCompare(b.itemName || ''));
-                
-                allInventoryData = inventory;
-                renderInventoryTable(inventory);
-                loadingMessage.classList.add('hidden');
-            }, (error) => {
-                console.error("Error fetching inventory:", error);
-                loadingMessage.textContent = 'Error loading inventory. Please try again.';
-            });
-        };
+        let allInventoryData = loadInventory();
 
         // Function to render inventory in the table
         const renderInventoryTable = (inventory) => {
             inventoryTableBody.innerHTML = '';
-            
+            loadingMessage.classList.add('hidden');
+
             if (inventory.length === 0) {
                 noInventoryMessage.classList.remove('hidden');
             } else {
@@ -319,28 +244,24 @@
         });
 
         // Handle form submission to add a new inventory item
-        addItemForm.addEventListener('submit', async (e) => {
+        addItemForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
             const itemData = {
+                id: crypto.randomUUID(),
                 itemName: form.itemName.value,
                 itemCategory: form.itemCategory.value,
                 itemQuantity: parseInt(form.itemQuantity.value, 10),
-                itemNotes: form.itemNotes.value,
-                addedBy: currentUserId
+                itemNotes: form.itemNotes.value
             };
 
-            try {
-                const inventoryCollectionRef = collection(db, `artifacts/${appId}/public/data/inventory`);
-                await addDoc(inventoryCollectionRef, itemData);
-                form.reset();
-                statusMessage.textContent = '✅ Item added successfully!';
-                statusMessage.className = 'mt-2 text-sm text-center text-green-600';
-            } catch (error) {
-                console.error("Error adding item:", error);
-                statusMessage.textContent = '❌ Error adding item.';
-                statusMessage.className = 'mt-2 text-sm text-center text-red-600';
-            }
+            allInventoryData.push(itemData);
+            allInventoryData.sort((a, b) => (a.itemName || '').localeCompare(b.itemName || ''));
+            saveInventory(allInventoryData);
+            renderInventoryTable(allInventoryData);
+            form.reset();
+            statusMessage.textContent = '✅ Item added successfully!';
+            statusMessage.className = 'mt-2 text-sm text-center text-green-600';
             setTimeout(() => {
                 statusMessage.textContent = '';
                 statusMessage.className = 'mt-2 text-sm text-center';
@@ -348,22 +269,19 @@
         });
 
         // Handle deletion of an inventory item
-        inventoryTableBody.addEventListener('click', async (e) => {
+        inventoryTableBody.addEventListener('click', (e) => {
             const deleteButton = e.target.closest('button');
             if (deleteButton) {
-                const docId = deleteButton.dataset.id;
-                if (docId) {
-                    try {
-                        const itemDocRef = doc(db, `artifacts/${appId}/public/data/inventory`, docId);
-                        await deleteDoc(itemDocRef);
-                    } catch (error) {
-                        console.error("Error deleting document:", error);
-                    }
+                const itemId = deleteButton.dataset.id;
+                if (itemId) {
+                    allInventoryData = allInventoryData.filter(item => item.id !== itemId);
+                    saveInventory(allInventoryData);
+                    renderInventoryTable(allInventoryData);
                 }
             }
         });
 
-        window.onload = authenticate;
+        renderInventoryTable(allInventoryData);
     </script>
 </body>
 </html>

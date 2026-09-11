@@ -59,12 +59,6 @@
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-8">
 
-        <!-- User ID and Authentication Status -->
-        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
-            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
-            <div id="authStatus" class="mt-1"></div>
-        </div>
-
         <!-- Dashboard Navigation Tabs -->
         <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
@@ -237,25 +231,13 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, onSnapshot, collection, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase configuration and app ID are globally provided
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    <!-- Data is stored locally in this browser (localStorage) -->
+    <script>
+        const STORAGE_KEY = 'farmhub_animals';
+        const loadAnimals = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const saveAnimals = (animals) => localStorage.setItem(STORAGE_KEY, JSON.stringify(animals));
 
         // UI elements
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const authStatus = document.getElementById('authStatus');
         const addAnimalForm = document.getElementById('addAnimalForm');
         const animalsTableBody = document.getElementById('animalsTableBody');
         const loadingMessage = document.getElementById('loadingMessage');
@@ -271,73 +253,13 @@
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-        let currentUserId = null;
-        let allAnimalsData = [];
+        let allAnimalsData = loadAnimals();
         let docIdToDelete = null;
-
-        // Function to handle authentication and update UI
-        const authenticate = async () => {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    authStatus.textContent = 'Signed in with custom token.';
-                } else {
-                    await signInAnonymously(auth);
-                    authStatus.textContent = 'Signed in anonymously.';
-                }
-            } catch (error) {
-                console.error("Authentication Error:", error);
-                authStatus.textContent = 'Authentication failed. Please try again.';
-            }
-        };
-
-        // Listen for authentication state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userIdDisplay.textContent = currentUserId;
-                setupAnimalsListener();
-            } else {
-                currentUserId = null;
-                userIdDisplay.textContent = 'Not authenticated';
-                authStatus.textContent = 'Please sign in.';
-                currentUserId = crypto.randomUUID(); // Fallback for unauthenticated users
-                userIdDisplay.textContent = 'Not authenticated (using temp ID)';
-                setupAnimalsListener();
-            }
-        });
-
-        // Function to set up the real-time listener for animals
-        const setupAnimalsListener = () => {
-            if (!currentUserId) {
-                return;
-            }
-
-            // Using a public collection to demonstrate real-time collaboration
-            const animalsCollectionRef = collection(db, `artifacts/${appId}/public/data/animals`);
-            loadingMessage.classList.remove('hidden');
-
-            onSnapshot(animalsCollectionRef, (snapshot) => {
-                const animals = [];
-                snapshot.forEach((doc) => {
-                    animals.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort animals by type
-                animals.sort((a, b) => (a.animalType || '').localeCompare(b.animalType || ''));
-
-                allAnimalsData = animals;
-                renderAnimalsTable(animals);
-                loadingMessage.classList.add('hidden');
-            }, (error) => {
-                console.error("Error fetching animals:", error);
-                loadingMessage.textContent = 'Error loading animals. Please try again.';
-            });
-        };
 
         // Function to render animals in the table with edit and delete buttons
         const renderAnimalsTable = (animals) => {
             animalsTableBody.innerHTML = '';
+            loadingMessage.classList.add('hidden');
 
             if (animals.length === 0) {
                 noAnimalsMessage.classList.remove('hidden');
@@ -417,29 +339,25 @@
         });
 
         // Handle form submission to add a new animal
-        addAnimalForm.addEventListener('submit', async (e) => {
+        addAnimalForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
             const animalData = {
+                id: crypto.randomUUID(),
                 animalType: form.animalType.value,
                 dateOfBirth: form.dateOfBirth.value,
                 tagId: form.tagId.value,
                 location: form.location.value,
-                notes: form.notes.value,
-                addedBy: currentUserId
+                notes: form.notes.value
             };
 
-            try {
-                const animalsCollectionRef = collection(db, `artifacts/${appId}/public/data/animals`);
-                await addDoc(animalsCollectionRef, animalData);
-                form.reset();
-                statusMessage.textContent = '✅ Animal added successfully!';
-                statusMessage.className = 'mt-2 text-sm text-center text-green-600';
-            } catch (error) {
-                console.error("Error adding animal:", error);
-                statusMessage.textContent = '❌ Error adding animal.';
-                statusMessage.className = 'mt-2 text-sm text-center text-red-600';
-            }
+            allAnimalsData.push(animalData);
+            allAnimalsData.sort((a, b) => (a.animalType || '').localeCompare(b.animalType || ''));
+            saveAnimals(allAnimalsData);
+            renderAnimalsTable(allAnimalsData);
+            form.reset();
+            statusMessage.textContent = '✅ Animal added successfully!';
+            statusMessage.className = 'mt-2 text-sm text-center text-green-600';
             setTimeout(() => {
                 statusMessage.textContent = '';
                 statusMessage.className = 'mt-2 text-sm text-center';
@@ -447,28 +365,26 @@
         });
 
         // Handle form submission to edit an animal
-        editAnimalForm.addEventListener('submit', async (e) => {
+        editAnimalForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
             const docId = form.editAnimalId.value;
-            const animalData = {
-                dateOfBirth: form.editDateOfBirth.value,
-                tagId: form.editTagId.value,
-                location: form.editLocation.value,
-                notes: form.editNotes.value,
-            };
+            const idx = allAnimalsData.findIndex(a => a.id === docId);
 
-            try {
-                const animalDocRef = doc(db, `artifacts/${appId}/public/data/animals`, docId);
-                await updateDoc(animalDocRef, animalData);
-                hideModal(editModal);
-                statusMessage.textContent = '✅ Animal updated successfully!';
-                statusMessage.className = 'mt-2 text-sm text-center text-green-600';
-            } catch (error) {
-                console.error("Error updating animal:", error);
-                statusMessage.textContent = '❌ Error updating animal.';
-                statusMessage.className = 'mt-2 text-sm text-center text-red-600';
+            if (idx !== -1) {
+                allAnimalsData[idx] = {
+                    ...allAnimalsData[idx],
+                    dateOfBirth: form.editDateOfBirth.value,
+                    tagId: form.editTagId.value,
+                    location: form.editLocation.value,
+                    notes: form.editNotes.value
+                };
+                saveAnimals(allAnimalsData);
+                renderAnimalsTable(allAnimalsData);
             }
+            hideModal(editModal);
+            statusMessage.textContent = '✅ Animal updated successfully!';
+            statusMessage.className = 'mt-2 text-sm text-center text-green-600';
             setTimeout(() => {
                 statusMessage.textContent = '';
                 statusMessage.className = 'mt-2 text-sm text-center';
@@ -509,19 +425,14 @@
             docIdToDelete = null;
         });
 
-        confirmDeleteBtn.addEventListener('click', async () => {
+        confirmDeleteBtn.addEventListener('click', () => {
             if (docIdToDelete) {
-                try {
-                    const animalDocRef = doc(db, `artifacts/${appId}/public/data/animals`, docIdToDelete);
-                    await deleteDoc(animalDocRef);
-                    hideModal(deleteModal);
-                    statusMessage.textContent = '✅ Animal deleted successfully!';
-                    statusMessage.className = 'mt-2 text-sm text-center text-green-600';
-                } catch (error) {
-                    console.error("Error deleting document:", error);
-                    statusMessage.textContent = '❌ Error deleting animal.';
-                    statusMessage.className = 'mt-2 text-sm text-center text-red-600';
-                }
+                allAnimalsData = allAnimalsData.filter(a => a.id !== docIdToDelete);
+                saveAnimals(allAnimalsData);
+                renderAnimalsTable(allAnimalsData);
+                hideModal(deleteModal);
+                statusMessage.textContent = '✅ Animal deleted successfully!';
+                statusMessage.className = 'mt-2 text-sm text-center text-green-600';
                 setTimeout(() => {
                     statusMessage.textContent = '';
                     statusMessage.className = 'mt-2 text-sm text-center';
@@ -530,7 +441,7 @@
             docIdToDelete = null;
         });
 
-        window.onload = authenticate;
+        renderAnimalsTable(allAnimalsData);
     </script>
 </body>
 </html>
