@@ -124,12 +124,6 @@
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-8">
 
-        <!-- User ID and Authentication Status -->
-        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
-            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
-            <div id="authStatus" class="mt-1"></div>
-        </div>
-
         <!-- Dashboard Navigation Tabs -->
         <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
@@ -154,7 +148,7 @@
                 <span>Customers</span>
             </a>
             <a href="finances.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 0 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
                 <span>Finances</span>
             </a>
             <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
@@ -238,95 +232,20 @@
 
     </main>
 
-    <!-- Firebase SDKs and custom JavaScript -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables for Firebase configuration provided by the Canvas environment
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase services
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    <!-- Data is stored locally in this browser (localStorage) -->
+    <script>
+        const STORAGE_KEY = 'farmhub_employees';
+        const loadEmployees = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const saveEmployees = (employees) => localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
 
         // Get DOM elements
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const authStatus = document.getElementById('authStatus');
         const addEmployeeForm = document.getElementById('addEmployeeForm');
         const employeesTableBody = document.getElementById('employeesTableBody');
         const loadingMessage = document.getElementById('loadingMessage');
         const noEmployeesMessage = document.getElementById('noEmployeesMessage');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        let currentUserId = null;
-        let allEmployeesData = []; // Store the fetched data for the download function
-
-        // Function to handle authentication
-        const authenticate = async () => {
-            try {
-                if (initialAuthToken) {
-                    // Sign in with the provided custom token
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    authStatus.textContent = 'Signed in with custom token.';
-                } else {
-                    // Sign in anonymously if no token is available
-                    await signInAnonymously(auth);
-                    authStatus.textContent = 'Signed in anonymously.';
-                }
-            } catch (error) {
-                console.error("Authentication Error:", error);
-                authStatus.textContent = 'Authentication failed. Please try again.';
-            }
-        };
-
-        // Listen for authentication state changes to get the user ID
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userIdDisplay.textContent = currentUserId;
-                setupEmployeesListener(); // Set up the data listener once authenticated
-            } else {
-                currentUserId = null;
-                userIdDisplay.textContent = 'Not authenticated (using temp ID)';
-                authStatus.textContent = 'Please sign in.';
-                // We still set up a listener even if not authenticated, but data will not be persisted.
-                currentUserId = crypto.randomUUID();
-                setupEmployeesListener();
-            }
-        });
-
-        // Function to set up the real-time listener for employee data from Firestore
-        const setupEmployeesListener = () => {
-            // Check if user ID is ready before setting up the listener
-            if (!currentUserId) {
-                return;
-            }
-
-            // Define the collection path for public data
-            const employeesCollectionRef = collection(db, `artifacts/${appId}/public/data/employees`);
-
-            // Use onSnapshot for real-time updates
-            onSnapshot(employeesCollectionRef, (snapshot) => {
-                const employees = [];
-                snapshot.forEach((doc) => {
-                    employees.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort employees by name for consistent display
-                employees.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-
-                allEmployeesData = employees; // Store the data for the download function
-                renderEmployeesTable(employees);
-            }, (error) => {
-                console.error("Error fetching employees:", error);
-                loadingMessage.textContent = 'Error loading employees. Please try again.';
-            });
-        };
+        let allEmployeesData = loadEmployees();
 
         // Function to render employee data in the HTML table
         const renderEmployeesTable = (employees) => {
@@ -393,32 +312,27 @@
         });
 
         // Handle form submission to add a new employee
-        addEmployeeForm.addEventListener('submit', async (e) => {
+        addEmployeeForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
             const employeeData = {
+                id: crypto.randomUUID(),
                 name: form.name.value,
                 position: form.position.value,
                 hireDate: form.hireDate.value,
                 dateOfBirth: form.dateOfBirth.value,
                 placeOfBirth: form.placeOfBirth.value,
-                currentLivingLocation: form.currentLivingLocation.value,
-                // Add the user ID to the document for ownership tracking
-                addedBy: currentUserId
+                currentLivingLocation: form.currentLivingLocation.value
             };
 
-            try {
-                const employeesCollectionRef = collection(db, `artifacts/${appId}/public/data/employees`);
-                await addDoc(employeesCollectionRef, employeeData);
-                form.reset(); // Clear the form after successful submission
-            } catch (error) {
-                console.error("Error adding employee:", error);
-                // You could add a simple message box here for the user
-            }
+            allEmployeesData.push(employeeData);
+            allEmployeesData.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            saveEmployees(allEmployeesData);
+            renderEmployeesTable(allEmployeesData);
+            form.reset(); // Clear the form after successful submission
         });
 
-        // Start the authentication process on page load
-        window.onload = authenticate;
+        renderEmployeesTable(allEmployeesData);
     </script>
 </body>
 </html>

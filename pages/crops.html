@@ -41,12 +41,6 @@
     <!-- Main Content Area -->
     <main class="container mx-auto px-4 py-8">
 
-        <!-- User ID and Authentication Status -->
-        <div class="bg-yellow-100 text-yellow-800 p-3 rounded-xl shadow-inner mb-6 text-sm text-center">
-            Your User ID: <span id="userIdDisplay" class="font-bold text-gray-700">Loading...</span>
-            <div id="authStatus" class="mt-1"></div>
-        </div>
-
         <!-- Dashboard Navigation Tabs -->
         <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
@@ -157,24 +151,12 @@
 
     </main>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Data is stored locally in this browser (localStorage) -->
+    <script>
+        const STORAGE_KEY = 'farmhub_crops';
+        const loadCrops = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const saveCrops = (crops) => localStorage.setItem(STORAGE_KEY, JSON.stringify(crops));
 
-        // Firebase configuration and app ID are globally provided
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const authStatus = document.getElementById('authStatus');
         const addCropForm = document.getElementById('addCropForm');
         const cropsTableBody = document.getElementById('cropsTableBody');
         const loadingMessage = document.getElementById('loadingMessage');
@@ -184,64 +166,7 @@
         const otherTypeContainer = document.getElementById('otherTypeContainer');
         const otherCropTypeInput = document.getElementById('otherCropType');
 
-        let currentUserId = null;
-        let allCropsData = []; // Store the fetched data for download
-
-        // Function to handle authentication and update UI
-        const authenticate = async () => {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    authStatus.textContent = 'Signed in with custom token.';
-                } else {
-                    await signInAnonymously(auth);
-                    authStatus.textContent = 'Signed in anonymously.';
-                }
-            } catch (error) {
-                console.error("Authentication Error:", error);
-                authStatus.textContent = 'Authentication failed. Please try again.';
-            }
-        };
-
-        // Listen for authentication state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userIdDisplay.textContent = currentUserId;
-                setupCropsListener();
-            } else {
-                currentUserId = null;
-                userIdDisplay.textContent = 'Not authenticated';
-                authStatus.textContent = 'Please sign in.';
-                currentUserId = crypto.randomUUID();
-                userIdDisplay.textContent = 'Not authenticated (using temp ID)';
-                setupCropsListener();
-            }
-        });
-
-        // Function to set up the real-time listener for crops
-        const setupCropsListener = () => {
-            if (!currentUserId) {
-                return;
-            }
-
-            const cropsCollectionRef = collection(db, `artifacts/${appId}/public/data/crops`);
-
-            onSnapshot(cropsCollectionRef, (snapshot) => {
-                const crops = [];
-                snapshot.forEach((doc) => {
-                    crops.push({ id: doc.id, ...doc.data() });
-                });
-                
-                crops.sort((a, b) => a.cropName.localeCompare(b.cropName));
-                
-                allCropsData = crops;
-                renderCropsTable(crops);
-            }, (error) => {
-                console.error("Error fetching crops:", error);
-                loadingMessage.textContent = 'Error loading crops. Please try again.';
-            });
-        };
+        let allCropsData = loadCrops();
 
         // Function to render crops in the table
         const renderCropsTable = (crops) => {
@@ -319,33 +244,31 @@
         });
 
         // Handle form submission to add a new crop
-        addCropForm.addEventListener('submit', async (e) => {
+        addCropForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
-            
+
             const selectedCropType = form.cropType.value;
             const finalCropType = selectedCropType === 'Other' ? form.otherCropType.value : selectedCropType;
 
             const cropData = {
+                id: crypto.randomUUID(),
                 cropName: form.cropName.value,
                 cropType: finalCropType,
                 plantingDate: form.plantingDate.value,
                 harvestDate: form.harvestDate.value,
                 location: form.location.value,
-                notes: form.notes.value,
-                addedBy: currentUserId
+                notes: form.notes.value
             };
 
-            try {
-                const cropsCollectionRef = collection(db, `artifacts/${appId}/public/data/crops`);
-                await addDoc(cropsCollectionRef, cropData);
-                form.reset();
-            } catch (error) {
-                console.error("Error adding crop:", error);
-            }
+            allCropsData.push(cropData);
+            allCropsData.sort((a, b) => a.cropName.localeCompare(b.cropName));
+            saveCrops(allCropsData);
+            renderCropsTable(allCropsData);
+            form.reset();
         });
 
-        window.onload = authenticate;
+        renderCropsTable(allCropsData);
     </script>
 </body>
 </html>
