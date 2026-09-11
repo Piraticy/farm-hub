@@ -10,10 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/theme.css">
+    <script defer src="assets/theme.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
         .details-summary-icon {
             transition: transform 0.3s ease-in-out;
         }
@@ -27,56 +27,29 @@
         .spinner {
             animation: spin 1s linear infinite;
         }
-        .tab-active {
-            @apply text-lime-800 bg-lime-100 font-semibold;
-        }
-
-        /* Dark mode colors */
-        body.dark-mode {
-            background-color: #1a202c;
-            color: #e2e8f0;
-        }
-        .dark-mode .bg-white {
-            background-color: #2d3748;
-        }
-        .dark-mode .bg-lime-50 {
-            background-color: #1a202c;
-        }
-        .dark-mode .bg-yellow-100 {
-            background-color: #4a5568;
-            color: #a0aec0;
-        }
-        .dark-mode .text-lime-800 {
-            color: #d1d5db; /* Light gray for contrast */
-        }
-        .dark-mode .tab-active {
-            background-color: #4a5568;
-            color: #d1d5db;
-        }
-        .dark-mode .hover\\:bg-gray-100:hover {
-            background-color: #4a5568;
-        }
-        .dark-mode .text-gray-600 {
-            color: #a0aec0;
-        }
-        .dark-mode .text-green-700 {
-            color: #68d391; /* A lighter green for dark mode */
-        }
-        .dark-mode .text-gray-700 {
-            color: #e2e8f0;
-        }
-        .dark-mode .text-green-600 {
-            color: #68d391;
-        }
     </style>
 </head>
 <body class="bg-gray-100">
 
     <!-- Header -->
-    <header class="bg-white shadow-sm py-8">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold text-gray-700">Inventory Management</h1>
-            <p class="text-gray-600 mt-2">View, add, and manage your farm's inventory.</p>
+    <header class="bg-white shadow-sm py-6">
+        <div class="container mx-auto px-4 flex items-center justify-between gap-4">
+            <a href="index.html" class="brand-mark">
+                <img src="favicon.svg" alt="">
+                <span>FarmHub</span>
+            </a>
+            <div class="text-center flex-1 min-w-0">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-700 truncate">Inventory Management</h1>
+                <p class="text-gray-600 text-sm mt-1">View, add, and manage your farm's inventory.</p>
+            </div>
+            <button id="themeToggle" class="p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200 shrink-0">
+                <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
         </div>
     </header>
 
@@ -115,7 +88,7 @@
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
                 <span>Finances</span>
             </a>
-            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active text-blue-600 bg-gray-100 font-semibold">
+            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
                 <span>Inventory</span>
             </a>

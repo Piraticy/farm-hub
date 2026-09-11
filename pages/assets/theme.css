@@ -1,0 +1,96 @@
+/* Shared FarmHub theme: base font/background, brand mark, active nav
+   tab, dark-mode toggle button, and dark-mode color overrides.
+   Centralized so every page shares one accent color and one working
+   implementation instead of near-identical copies in each page. */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fdee;
+    color: #1a202c;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #047857;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.brand-mark img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+}
+
+.tab-active {
+    color: #047857;
+    background-color: #d1fae5;
+    font-weight: 600;
+}
+
+#themeToggle {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+body.dark-mode {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+body.dark-mode .brand-mark {
+    color: #6ee7b7;
+}
+
+body.dark-mode .tab-active,
+body.dark-mode .tab-active:hover {
+    background-color: #4a5568;
+    color: #d1d5db;
+}
+
+body.dark-mode #themeToggle {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .bg-white {
+    background-color: #2d3748;
+}
+
+body.dark-mode .bg-lime-50 {
+    background-color: #1a202c;
+}
+
+body.dark-mode .bg-yellow-100 {
+    background-color: #4a5568;
+    color: #a0aec0;
+}
+
+body.dark-mode .text-lime-800 {
+    color: #d1d5db;
+}
+
+body.dark-mode .hover\:bg-gray-100:hover {
+    background-color: #4a5568;
+}
+
+body.dark-mode .text-gray-600 {
+    color: #a0aec0;
+}
+
+body.dark-mode .text-gray-700 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .text-green-600 {
+    color: #68d391;
+}
+
+body.dark-mode .text-green-700 {
+    color: #68d391;
+}
