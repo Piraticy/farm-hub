@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         /* Base styles for the Inter font and a smooth theme transition */
         body {
@@ -18,13 +19,6 @@
             background-color: #f7fdee;
             color: #1a202c;
             transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Active tab style - now handles both light and dark mode colors */
-        .tab-active {
-            color: #4c4639;
-            background-color: #e3ffe5;
-            font-weight: 600;
         }
 
         /*
@@ -75,11 +69,6 @@
             color: #d1d5db; /* A lighter gray for contrast on dark backgrounds */
         }
 
-        body.dark-mode .tab-active {
-            background-color: #4a5568; /* Darker background for the active tab */
-            color: #d1d5db;
-        }
-        
         body.dark-mode .text-green-600 {
             color: #68d391; /* A lighter green for dark mode */
         }
@@ -104,18 +93,24 @@
         }
 
     </style>
+    <link rel="stylesheet" href="assets/theme.css">
+    <script defer src="assets/theme.js"></script>
 </head>
 <body>
 
     <!-- Header Section -->
-    <header class="bg-white shadow-sm py-8">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold text-gray-700">Employees Management</h1>
-                <p class="text-gray-600 mt-2">View, add, and manage your farm's employees.</p>
+    <header class="bg-white shadow-sm py-6">
+        <div class="container mx-auto px-4 flex items-center justify-between gap-4">
+            <a href="index.html" class="brand-mark">
+                <img src="favicon.svg" alt="">
+                <span>FarmHub</span>
+            </a>
+            <div class="text-center flex-1 min-w-0">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-700 truncate">Employees Management</h1>
+                <p class="text-gray-600 text-sm mt-1">View, add, and manage your farm's employees.</p>
             </div>
             <!-- Theme Toggle Button -->
-            <button id="themeToggle" class="p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
+            <button id="themeToggle" class="p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200 shrink-0">
                 <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                 </svg>
@@ -150,7 +145,7 @@
                 <span>Animals</span>
             </a>
             <!-- Removed conflicting classes from the active tab and added a consistent color for the icon -->
-            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active text-lime-800">
+            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Employees</span>
             </a>
@@ -267,9 +262,6 @@
         const loadingMessage = document.getElementById('loadingMessage');
         const noEmployeesMessage = document.getElementById('noEmployeesMessage');
         const downloadBtn = document.getElementById('downloadBtn');
-        const themeToggleBtn = document.getElementById('themeToggle');
-        const moonIcon = document.getElementById('moon-icon');
-        const sunIcon = document.getElementById('sun-icon');
 
         let currentUserId = null;
         let allEmployeesData = []; // Store the fetched data for the download function
@@ -424,43 +416,6 @@
                 // You could add a simple message box here for the user
             }
         });
-
-        // --- Theme Toggle Functionality ---
-        const applyTheme = (theme) => {
-            const body = document.body;
-            // Set the theme on the body
-            if (theme === 'dark') {
-                body.classList.add('dark-mode');
-            } else {
-                body.classList.remove('dark-mode');
-            }
-
-            // Update the icon visibility
-            if (body.classList.contains('dark-mode')) {
-                moonIcon.classList.add('hidden');
-                sunIcon.classList.remove('hidden');
-            } else {
-                moonIcon.classList.remove('hidden');
-                sunIcon.classList.add('hidden');
-            }
-        };
-        
-        // Add event listener to the toggle button
-        themeToggleBtn.addEventListener('click', () => {
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            const newTheme = isDarkMode ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Check for saved theme preference in local storage on page load
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        } else {
-            // Default to light theme if no preference is saved
-            applyTheme('light');
-        }
 
         // Start the authentication process on page load
         window.onload = authenticate;
