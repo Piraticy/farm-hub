@@ -21,6 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script src="assets/weather.js"></script>
     <script src="assets/auth.js"></script>
     <script>
         // If already logged in, skip straight to the dashboard.
@@ -39,6 +40,8 @@
     </header>
 
     <main class="container mx-auto px-4 py-10 max-w-md">
+        <div id="fhWidgets" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"></div>
+
         <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <h1 class="text-xl font-semibold text-gray-800 mb-1">Admin</h1>
             <p class="text-gray-500 text-sm mb-4">Full access, including granting staff their section permissions. No password yet — this is a placeholder login until real accounts are added.</p>
@@ -59,6 +62,8 @@
     </main>
 
     <script>
+        FarmHubWeather.mount('fhWidgets');
+
         const staffSelect = document.getElementById('staffSelect');
         const staffForm = document.getElementById('staffLoginForm');
         const noStaffMessage = document.getElementById('noStaffMessage');
