@@ -31,28 +31,43 @@
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#059669">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FarmHub">
+    <script defer src="assets/pwa.js"></script>
 </head>
 <body class="bg-gray-100">
 
     <!-- Header -->
-    <header class="bg-white shadow-sm py-6">
-        <div class="container mx-auto px-4 flex items-center justify-between gap-4">
+    <header class="bg-white shadow-sm py-4 sm:py-6">
+        <div class="container mx-auto px-4 flex items-center justify-between gap-2 sm:gap-4">
             <a href="index.html" class="brand-mark">
                 <img src="favicon.svg" alt="">
-                <span>FarmHub</span>
+                <span class="hidden sm:inline">FarmHub</span>
             </a>
             <div class="text-center flex-1 min-w-0">
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-700 truncate">Animals Management</h1>
-                <p class="text-gray-600 text-sm mt-1">View, add, and manage your farm's animals.</p>
+                <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-gray-700 truncate">Animals Management</h1>
+                <p class="hidden sm:block text-gray-600 text-sm mt-1">View, add, and manage your farm's animals.</p>
             </div>
-            <button id="themeToggle" class="p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200 shrink-0">
+            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <button id="installBtn" class="hidden p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200" title="Install app" aria-label="Install app">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
+                    </svg>
+                </button>
+                <button id="themeToggle" class="p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
                 <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                 </svg>
                 <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                 </svg>
-            </button>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -60,7 +75,7 @@
     <main class="container mx-auto px-4 py-8">
 
         <!-- Dashboard Navigation Tabs -->
-        <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex justify-center space-x-2 md:space-x-4 overflow-x-auto">
+        <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex flex-wrap justify-center gap-2">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                 <span>Dashboard</span>

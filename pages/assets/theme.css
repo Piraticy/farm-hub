@@ -33,7 +33,8 @@ body {
     font-weight: 600;
 }
 
-#themeToggle {
+#themeToggle,
+#installBtn {
     background-color: #f3f4f6;
     color: #4b5563;
 }
@@ -53,7 +54,8 @@ body.dark-mode .tab-active:hover {
     color: #d1d5db;
 }
 
-body.dark-mode #themeToggle {
+body.dark-mode #themeToggle,
+body.dark-mode #installBtn {
     background-color: #4a5568;
     color: #e2e8f0;
 }
