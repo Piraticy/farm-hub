@@ -29,8 +29,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script src="assets/auth.js"></script>
+    <script>FarmHubAuth.guardPage(null);</script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100" data-page="dashboard">
 
     <!-- Header -->
     <header class="bg-white shadow-sm py-4 sm:py-6">
@@ -70,27 +72,27 @@
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                 <span>Dashboard</span>
             </a>
-            <a href="crops.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="crops.html" data-feature="crops" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
                 <span>Crops</span>
             </a>
-            <a href="animals.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="animals.html" data-feature="animals" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Animals</span>
             </a>
-            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="employees.html" data-feature="employees" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Employees</span>
             </a>
-            <a href="customers.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="customers.html" data-feature="customers" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Customers</span>
             </a>
-            <a href="finances.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="finances.html" data-feature="finances" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
                 <span>Finances</span>
             </a>
-            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="inventory.html" data-feature="inventory" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
                 <span>Inventory</span>
             </a>
@@ -98,7 +100,7 @@
 
         <!-- Section Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <a href="crops.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="crops.html" data-feature="crops" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-lime-100 text-lime-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
                 </div>
@@ -106,7 +108,7 @@
                 <p class="text-gray-500 text-sm flex-grow">Track planting and harvest schedules for every field.</p>
                 <span class="text-sm font-medium text-lime-700 mt-4">Manage crops &rarr;</span>
             </a>
-            <a href="animals.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="animals.html" data-feature="animals" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
@@ -114,7 +116,7 @@
                 <p class="text-gray-500 text-sm flex-grow">Keep records of livestock health, feeding, and counts.</p>
                 <span class="text-sm font-medium text-amber-700 mt-4">Manage animals &rarr;</span>
             </a>
-            <a href="employees.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="employees.html" data-feature="employees" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
@@ -122,7 +124,7 @@
                 <p class="text-gray-500 text-sm flex-grow">Manage your team, roles, and contact information.</p>
                 <span class="text-sm font-medium text-blue-700 mt-4">Manage employees &rarr;</span>
             </a>
-            <a href="customers.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="customers.html" data-feature="customers" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
@@ -130,7 +132,7 @@
                 <p class="text-gray-500 text-sm flex-grow">Keep track of buyers, orders, and contact details.</p>
                 <span class="text-sm font-medium text-purple-700 mt-4">Manage customers &rarr;</span>
             </a>
-            <a href="finances.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="finances.html" data-feature="finances" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
                 </div>
@@ -138,7 +140,7 @@
                 <p class="text-gray-500 text-sm flex-grow">Review income, expenses, and overall farm profitability.</p>
                 <span class="text-sm font-medium text-green-700 mt-4">Manage finances &rarr;</span>
             </a>
-            <a href="inventory.html" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+            <a href="inventory.html" data-feature="inventory" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
                 <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
                 </div>

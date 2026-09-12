@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In · FarmHub</title>
+    <!-- Tailwind CSS for a clean, modern look -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/theme.css">
+    <script defer src="assets/theme.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#059669">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FarmHub">
+    <script defer src="assets/pwa.js"></script>
+    <script src="assets/auth.js"></script>
+    <script>
+        // If already logged in, skip straight to the dashboard.
+        if (FarmHubAuth.getSession()) {
+            window.location.replace('index.html');
+        }
+    </script>
+</head>
+<body class="bg-gray-100" data-page="login">
+
+    <header class="bg-white shadow-sm py-6">
+        <div class="container mx-auto px-4 flex items-center justify-center gap-2">
+            <img src="favicon.svg" alt="" class="w-8 h-8 rounded-lg">
+            <span class="text-lg font-bold text-emerald-700">FarmHub</span>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h1 class="text-xl font-semibold text-gray-800 mb-1">Admin</h1>
+            <p class="text-gray-500 text-sm mb-4">Full access, including granting staff their section permissions. No password yet — this is a placeholder login until real accounts are added.</p>
+            <button id="adminLoginBtn" class="w-full py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200">Log in as Admin</button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h1 class="text-xl font-semibold text-gray-800 mb-1">Staff</h1>
+            <p class="text-gray-500 text-sm mb-4">Pick your name. You'll only see the sections an admin has given you access to.</p>
+            <form id="staffLoginForm" class="space-y-4">
+                <select id="staffSelect" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border">
+                    <option value="" disabled selected>Select your name...</option>
+                </select>
+                <button type="submit" class="w-full py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-800 transition-colors duration-200">Log in</button>
+            </form>
+            <p id="noStaffMessage" class="hidden text-sm text-gray-500 mt-4">No staff added yet. Log in as Admin and add employees on the Employees page first.</p>
+        </div>
+    </main>
+
+    <script>
+        const staffSelect = document.getElementById('staffSelect');
+        const staffForm = document.getElementById('staffLoginForm');
+        const noStaffMessage = document.getElementById('noStaffMessage');
+
+        const employees = FarmHubAuth.loadEmployees();
+        if (employees.length === 0) {
+            staffForm.classList.add('hidden');
+            noStaffMessage.classList.remove('hidden');
+        } else {
+            employees
+                .slice()
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+                .forEach((employee) => {
+                    const option = document.createElement('option');
+                    option.value = employee.id;
+                    option.textContent = employee.name || 'Unnamed';
+                    staffSelect.appendChild(option);
+                });
+        }
+
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            FarmHubAuth.setSession({ role: 'admin' });
+            window.location.href = 'index.html';
+        });
+
+        staffForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!staffSelect.value) {
+                return;
+            }
+            FarmHubAuth.setSession({ role: 'staff', employeeId: staffSelect.value });
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

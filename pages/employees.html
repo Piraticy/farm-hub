@@ -103,8 +103,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script src="assets/auth.js"></script>
+    <script>FarmHubAuth.guardPage('employees');</script>
 </head>
-<body>
+<body data-page="employees">
 
     <!-- Header Section -->
     <header class="bg-white shadow-sm py-4 sm:py-6">
@@ -145,28 +147,28 @@
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                 <span>Dashboard</span>
             </a>
-            <a href="crops.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="crops.html" data-feature="crops" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
                 <span>Crops</span>
             </a>
-            <a href="animals.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="animals.html" data-feature="animals" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Animals</span>
             </a>
             <!-- Removed conflicting classes from the active tab and added a consistent color for the icon -->
-            <a href="employees.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
+            <a href="employees.html" data-feature="employees" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Employees</span>
             </a>
-            <a href="customers.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="customers.html" data-feature="customers" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span>Customers</span>
             </a>
-            <a href="finances.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="finances.html" data-feature="finances" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
                 <span>Finances</span>
             </a>
-            <a href="inventory.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
+            <a href="inventory.html" data-feature="inventory" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 hover:bg-gray-100 text-gray-600">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
                 <span>Inventory</span>
             </a>
@@ -243,6 +245,14 @@
             </div>
             <div id="loadingMessage" class="text-center text-gray-500 mt-4">Loading employees...</div>
             <div id="noEmployeesMessage" class="hidden text-center text-gray-500 mt-4">No employees found. Add one above!</div>
+        </div>
+
+        <!-- Admin-only: grant each staff member access to specific sections -->
+        <div id="staffAccessSection" class="hidden bg-white rounded-2xl shadow-lg p-6 mt-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-1">Manage Staff Access</h2>
+            <p class="text-gray-500 text-sm mb-4">Admin only. Choose which sections each staff member can use when they log in as themselves.</p>
+            <div id="staffAccessList" class="space-y-4"></div>
+            <p id="noStaffAccessMessage" class="hidden text-center text-gray-500 mt-4">Add an employee above to grant them access.</p>
         </div>
 
     </main>
@@ -344,8 +354,66 @@
             allEmployeesData.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             saveEmployees(allEmployeesData);
             renderEmployeesTable(allEmployeesData);
+            renderStaffAccess();
             form.reset(); // Clear the form after successful submission
         });
+
+        // --- Admin only: grant/revoke each staff member's section access ---
+        const staffAccessSection = document.getElementById('staffAccessSection');
+        const staffAccessList = document.getElementById('staffAccessList');
+        const noStaffAccessMessage = document.getElementById('noStaffAccessMessage');
+
+        function renderStaffAccess() {
+            staffAccessList.innerHTML = '';
+            if (allEmployeesData.length === 0) {
+                noStaffAccessMessage.classList.remove('hidden');
+                return;
+            }
+            noStaffAccessMessage.classList.add('hidden');
+            allEmployeesData.forEach((employee) => {
+                const perms = Array.isArray(employee.permissions) ? employee.permissions : [];
+                const checkboxes = FarmHubAuth.FEATURES.map((feature) => `
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" data-employee="${employee.id}" data-feature-key="${feature.key}" ${perms.includes(feature.key) ? 'checked' : ''} class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                        ${feature.label}
+                    </label>
+                `).join('');
+                const row = document.createElement('div');
+                row.className = 'border border-gray-200 rounded-xl p-4';
+                row.innerHTML = `
+                    <p class="font-medium text-gray-800 mb-2">${employee.name || 'Unnamed'}</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${checkboxes}</div>
+                `;
+                staffAccessList.appendChild(row);
+            });
+        }
+
+        staffAccessList.addEventListener('change', (e) => {
+            const checkbox = e.target.closest('input[type="checkbox"]');
+            if (!checkbox) {
+                return;
+            }
+            const employee = allEmployeesData.find((emp) => emp.id === checkbox.dataset.employee);
+            if (!employee) {
+                return;
+            }
+            const current = new Set(Array.isArray(employee.permissions) ? employee.permissions : []);
+            if (checkbox.checked) {
+                current.add(checkbox.dataset.featureKey);
+            } else {
+                current.delete(checkbox.dataset.featureKey);
+            }
+            FarmHubAuth.setEmployeePermissions(employee.id, Array.from(current));
+            // Re-sync from localStorage so this page's in-memory copy can't
+            // go stale and overwrite the permission change on the next save.
+            allEmployeesData = loadEmployees();
+        });
+
+        const currentSession = FarmHubAuth.getSession();
+        if (currentSession && currentSession.role === 'admin') {
+            staffAccessSection.classList.remove('hidden');
+            renderStaffAccess();
+        }
 
         renderEmployeesTable(allEmployeesData);
     </script>
