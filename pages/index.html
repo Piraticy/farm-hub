@@ -29,7 +29,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
-    <script src="assets/weather.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage(null);</script>
 </head>
@@ -104,8 +103,6 @@
             </a>
         </div>
 
-        <div id="fhWidgets" class="mb-8"></div>
-
         <!-- Section Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <a href="crops.html" data-feature="crops" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
@@ -159,9 +156,5 @@
         </div>
 
     </main>
-
-    <script>
-        FarmHubWeather.mount('fhWidgets', { showClock: false });
-    </script>
 </body>
 </html>
