@@ -29,49 +29,101 @@
             window.location.replace('index.html');
         }
     </script>
+    <style>
+        body {
+            background-image: radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.10), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(20, 184, 166, 0.10), transparent 45%);
+        }
+        body.dark-mode {
+            background-image: radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.08), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(20, 184, 166, 0.08), transparent 45%);
+        }
+        .auth-tab {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .auth-tab.is-active {
+            color: #047857;
+            background-color: #ecfdf5;
+            border-color: #059669;
+        }
+        body.dark-mode .auth-tab.is-active {
+            color: #6ee7b7;
+            background-color: #1a202c;
+        }
+    </style>
 </head>
-<body class="bg-gray-100" data-page="login">
+<body class="bg-gray-100 min-h-screen" data-page="login">
 
-    <header class="bg-white shadow-sm py-6">
+    <header class="py-8">
         <div class="container mx-auto px-4 flex items-center justify-center gap-2">
-            <img src="favicon.svg" alt="" class="w-8 h-8 rounded-lg">
-            <span class="text-lg font-bold text-emerald-700">FarmHub</span>
+            <img src="favicon.svg" alt="" class="w-9 h-9 rounded-lg shadow-sm">
+            <span class="text-xl font-bold text-emerald-700">FarmHub</span>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-10 max-w-md">
-        <div id="fhWidgets" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"></div>
+    <main class="container mx-auto px-4 pb-12 max-w-md">
+        <div id="fhWidgets" class="grid grid-cols-2 gap-3 mb-6"></div>
 
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h1 class="text-xl font-semibold text-gray-800 mb-1">Admin</h1>
-            <p class="text-gray-500 text-sm mb-4">Full access, including granting staff their section permissions. No password yet — this is a placeholder login until real accounts are added.</p>
-            <button id="adminLoginBtn" class="w-full py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200">Log in as Admin</button>
-        </div>
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div class="grid grid-cols-2">
+                <button id="tabAdminBtn" type="button" class="auth-tab is-active py-3 text-sm font-semibold border-b-2 border-transparent">Admin</button>
+                <button id="tabStaffBtn" type="button" class="auth-tab py-3 text-sm font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-700">Staff</button>
+            </div>
 
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h1 class="text-xl font-semibold text-gray-800 mb-1">Staff</h1>
-            <p class="text-gray-500 text-sm mb-4">Pick your name. You'll only see the sections an admin has given you access to.</p>
-            <form id="staffLoginForm" class="space-y-4">
-                <select id="staffSelect" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border">
-                    <option value="" disabled selected>Select your name...</option>
-                </select>
-                <button type="submit" class="w-full py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-800 transition-colors duration-200">Log in</button>
-            </form>
-            <p id="noStaffMessage" class="hidden text-sm text-gray-500 mt-4">No staff added yet. Log in as Admin and add employees on the Employees page first.</p>
+            <div class="p-6">
+                <div id="adminPanel" class="text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l2.25 2.25L15 9.75m6 2.25c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                        </svg>
+                    </div>
+                    <button id="adminLoginBtn" class="w-full py-2.5 px-4 rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200">Log in as Admin</button>
+                </div>
+
+                <div id="staffPanel" class="hidden text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+                        </svg>
+                    </div>
+                    <form id="staffLoginForm" class="space-y-3 text-left">
+                        <select id="staffSelect" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm p-2.5 border">
+                            <option value="" disabled selected>Select your name...</option>
+                        </select>
+                        <button type="submit" id="staffLoginBtn" class="w-full py-2.5 px-4 rounded-lg shadow-sm text-sm font-semibold text-white bg-gray-800 hover:bg-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-800">Log in</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </main>
 
     <script>
         FarmHubWeather.mount('fhWidgets');
 
+        const tabAdminBtn = document.getElementById('tabAdminBtn');
+        const tabStaffBtn = document.getElementById('tabStaffBtn');
+        const adminPanel = document.getElementById('adminPanel');
+        const staffPanel = document.getElementById('staffPanel');
+
+        function showTab(tab) {
+            const isAdmin = tab === 'admin';
+            adminPanel.classList.toggle('hidden', !isAdmin);
+            staffPanel.classList.toggle('hidden', isAdmin);
+            tabAdminBtn.classList.toggle('is-active', isAdmin);
+            tabStaffBtn.classList.toggle('is-active', !isAdmin);
+        }
+        tabAdminBtn.addEventListener('click', () => showTab('admin'));
+        tabStaffBtn.addEventListener('click', () => showTab('staff'));
+
         const staffSelect = document.getElementById('staffSelect');
         const staffForm = document.getElementById('staffLoginForm');
-        const noStaffMessage = document.getElementById('noStaffMessage');
+        const staffLoginBtn = document.getElementById('staffLoginBtn');
 
         const employees = FarmHubAuth.loadEmployees();
         if (employees.length === 0) {
-            staffForm.classList.add('hidden');
-            noStaffMessage.classList.remove('hidden');
+            staffSelect.innerHTML = '<option value="" disabled selected>No staff added yet</option>';
+            staffSelect.disabled = true;
+            staffLoginBtn.disabled = true;
         } else {
             employees
                 .slice()
