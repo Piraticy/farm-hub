@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FarmHub Dashboard</title>
     <!-- Tailwind CSS for a clean, modern look -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for a clean, modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,10 +30,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script defer src="assets/dashboard-interactions.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage(null);</script>
 </head>
 <body class="bg-gray-100" data-page="dashboard">
+
+    <div class="fh-blob fh-blob-a" aria-hidden="true"></div>
+    <div class="fh-blob fh-blob-b" aria-hidden="true"></div>
 
     <!-- Header -->
     <header class="bg-white shadow-sm py-4 sm:py-6 sticky top-0 z-20">
@@ -46,17 +51,17 @@
                 <p class="hidden sm:block text-gray-600 text-sm mt-1">An overview of your farm's crops, animals, people, and finances.</p>
             </div>
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button id="logoutBtn" title="Log out" aria-label="Log out" class="p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
+                <button id="logoutBtn" title="Log out" aria-label="Log out" class="fh-ripple p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
                     <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
                 </button>
-                <button id="installBtn" class="hidden p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200" title="Install app" aria-label="Install app">
+                <button id="installBtn" class="fh-ripple hidden p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200" title="Install app" aria-label="Install app">
                     <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
                     </svg>
                 </button>
-                <button id="themeToggle" class="p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
+                <button id="themeToggle" class="fh-ripple p-2 sm:p-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors duration-200">
                 <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                 </svg>
@@ -72,7 +77,7 @@
     <main class="container mx-auto px-4 py-8">
 
         <!-- Dashboard Navigation Tabs -->
-        <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex flex-wrap justify-center gap-2">
+        <div class="fh-animate-in bg-white rounded-2xl shadow-lg p-2 mb-8 flex flex-wrap justify-center gap-2">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                 <span>Dashboard</span>
@@ -104,55 +109,103 @@
         </div>
 
         <!-- Section Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <a href="crops.html" data-feature="crops" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-lime-100 text-lime-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="fhCardGrid">
+            <div class="fh-card-wrap fh-animate-in" data-feature="crops">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="crops" aria-label="Pin Crops to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Crops</h2>
-                <p class="text-gray-500 text-sm flex-grow">Track planting and harvest schedules for every field.</p>
-                <span class="text-sm font-medium text-lime-700 mt-4">Manage crops &rarr;</span>
-            </a>
-            <a href="animals.html" data-feature="animals" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <a href="crops.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-lime-100 text-lime-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Crops</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Track planting and harvest schedules for every field.</p>
+                    <span class="text-sm font-medium text-lime-700 mt-4">Manage crops &rarr;</span>
+                </a>
+            </div>
+            <div class="fh-card-wrap fh-animate-in" data-feature="animals">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="animals" aria-label="Pin Animals to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Animals</h2>
-                <p class="text-gray-500 text-sm flex-grow">Keep records of livestock health, feeding, and counts.</p>
-                <span class="text-sm font-medium text-amber-700 mt-4">Manage animals &rarr;</span>
-            </a>
-            <a href="employees.html" data-feature="employees" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <a href="animals.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Animals</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Keep records of livestock health, feeding, and counts.</p>
+                    <span class="text-sm font-medium text-amber-700 mt-4">Manage animals &rarr;</span>
+                </a>
+            </div>
+            <div class="fh-card-wrap fh-animate-in" data-feature="employees">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="employees" aria-label="Pin Employees to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Employees</h2>
-                <p class="text-gray-500 text-sm flex-grow">Manage your team, roles, and contact information.</p>
-                <span class="text-sm font-medium text-blue-700 mt-4">Manage employees &rarr;</span>
-            </a>
-            <a href="customers.html" data-feature="customers" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <a href="employees.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Employees</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Manage your team, roles, and contact information.</p>
+                    <span class="text-sm font-medium text-blue-700 mt-4">Manage employees &rarr;</span>
+                </a>
+            </div>
+            <div class="fh-card-wrap fh-animate-in" data-feature="customers">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="customers" aria-label="Pin Customers to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Customers</h2>
-                <p class="text-gray-500 text-sm flex-grow">Keep track of buyers, orders, and contact details.</p>
-                <span class="text-sm font-medium text-purple-700 mt-4">Manage customers &rarr;</span>
-            </a>
-            <a href="finances.html" data-feature="finances" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
+                <a href="customers.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM10 18a3 3 0 11-6 0 3 3 0 016 0zM16 18a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Customers</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Keep track of buyers, orders, and contact details.</p>
+                    <span class="text-sm font-medium text-purple-700 mt-4">Manage customers &rarr;</span>
+                </a>
+            </div>
+            <div class="fh-card-wrap fh-animate-in" data-feature="finances">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="finances" aria-label="Pin Finances to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Finances</h2>
-                <p class="text-gray-500 text-sm flex-grow">Review income, expenses, and overall farm profitability.</p>
-                <span class="text-sm font-medium text-green-700 mt-4">Manage finances &rarr;</span>
-            </a>
-            <a href="inventory.html" data-feature="inventory" class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
-                <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                <a href="finances.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v8h12V6H4zm0 2h12V6H4v2z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Finances</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Review income, expenses, and overall farm profitability.</p>
+                    <span class="text-sm font-medium text-green-700 mt-4">Manage finances &rarr;</span>
+                </a>
+            </div>
+            <div class="fh-card-wrap fh-animate-in" data-feature="inventory">
+                <div class="fh-pin-action">
+                    <button type="button" class="fh-pin-btn" tabindex="-1" data-pin-key="inventory" aria-label="Pin Inventory to top" aria-pressed="false">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.363 1.118l1.287 3.96c.3.922-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.196-1.538-1.118l1.287-3.96a1 1 0 00-.363-1.118L2.98 9.387c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.96z"></path></svg>
+                    </button>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-1">Inventory</h2>
-                <p class="text-gray-500 text-sm flex-grow">Monitor supplies, equipment, and stock levels.</p>
-                <span class="text-sm font-medium text-rose-700 mt-4">Manage inventory &rarr;</span>
-            </a>
+                <a href="inventory.html" class="fh-card fh-ripple bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9a1 1 0 11-2 0 1 1 0 012 0zM12 9a1 1 0 11-2 0 1 1 0 012 0zM14 9a1 1 0 11-2 0 1 1 0 012 0zM10 13a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                    </div>
+                    <span class="fh-pin-star hidden" aria-hidden="true">&#9733;</span>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Inventory</h2>
+                    <p class="text-gray-500 text-sm flex-grow">Monitor supplies, equipment, and stock levels.</p>
+                    <span class="text-sm font-medium text-rose-700 mt-4">Manage inventory &rarr;</span>
+                </a>
+            </div>
         </div>
 
     </main>
