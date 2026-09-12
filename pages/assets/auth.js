@@ -101,32 +101,22 @@ const FarmHubAuth = (function () {
         return employee ? employee.name : 'Staff';
     }
 
-    // Renders the "logged in as ... / Log out" strip and enforces the
-    // current page's access, hiding nav links / dashboard cards for
-    // features the current user can't reach.
-    function renderAuthBar() {
-        const session = getSession();
-        const bar = document.createElement('div');
-        bar.id = 'authBar';
-        bar.className = 'auth-bar';
-
-        const who = document.createElement('span');
-        who.textContent = session
-            ? `Logged in as ${displayName(session)}${session.role === 'admin' ? ' (Admin)' : ''}`
-            : '';
-        bar.appendChild(who);
-
-        const logoutBtn = document.createElement('button');
-        logoutBtn.type = 'button';
-        logoutBtn.className = 'auth-bar-logout';
-        logoutBtn.textContent = 'Log out';
+    // Wires the page's existing #logoutBtn icon button (in the header,
+    // next to the theme toggle) and enforces the current page's access,
+    // hiding nav links / dashboard cards for features the current user
+    // can't reach.
+    function wireLogout(session) {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (!logoutBtn) {
+            return;
+        }
+        const name = displayName(session);
+        logoutBtn.title = name ? `Log out (${name})` : 'Log out';
+        logoutBtn.setAttribute('aria-label', logoutBtn.title);
         logoutBtn.addEventListener('click', () => {
             clearSession();
             window.location.href = 'login.html';
         });
-        bar.appendChild(logoutBtn);
-
-        document.body.insertBefore(bar, document.body.firstChild);
     }
 
     function applyFeatureVisibility(session) {
@@ -155,7 +145,7 @@ const FarmHubAuth = (function () {
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderAuthBar();
+            wireLogout(session);
             applyFeatureVisibility(session);
         });
     }

@@ -168,23 +168,32 @@ const FarmHubWeather = (function () {
         );
     }
 
-    function mount(containerId) {
+    function mount(containerId, options) {
         const container = document.getElementById(containerId);
         if (!container) {
             return;
         }
+        const showClock = !options || options.showClock !== false;
 
-        container.innerHTML = `
-            <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-center">
-                <p id="fhClock" class="text-3xl font-bold text-gray-800"></p>
-                <p id="fhDate" class="text-gray-500 text-sm mt-1"></p>
-            </div>
-            <div class="bg-white rounded-2xl shadow-lg p-6" id="fhWeatherCard">
-                <p class="text-gray-500 text-sm">Loading weather...</p>
-            </div>
-        `;
+        container.innerHTML = showClock
+            ? `
+                <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-center">
+                    <p id="fhClock" class="text-3xl font-bold text-gray-800"></p>
+                    <p id="fhDate" class="text-gray-500 text-sm mt-1"></p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6" id="fhWeatherCard">
+                    <p class="text-gray-500 text-sm">Loading weather...</p>
+                </div>
+            `
+            : `
+                <div class="bg-white rounded-2xl shadow-lg p-6 max-w-xs" id="fhWeatherCard">
+                    <p class="text-gray-500 text-sm">Loading weather...</p>
+                </div>
+            `;
 
-        startClock(document.getElementById('fhClock'), document.getElementById('fhDate'));
+        if (showClock) {
+            startClock(document.getElementById('fhClock'), document.getElementById('fhDate'));
+        }
         loadWeather(document.getElementById('fhWeatherCard'));
     }
 
