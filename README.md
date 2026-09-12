@@ -6,6 +6,8 @@ Welcome to the FarmHub Dashboard! This project is a simple web application to he
 * Manage crops, animals, employees, inventory, and finances.
 * Dark mode for comfortable viewing.
 * No backend, no accounts, no cost — data is saved in your browser's local storage.
+* Sign in as Admin (no password yet) or as an individual staff member. Admin can grant each staff member access to specific sections from the Employees page; staff only see what they've been granted.
+  **This is a placeholder access model, not real security** — there's no backend or password, so anyone with access to this browser's storage can bypass it. Don't rely on it to protect sensitive data.
 
 ### Getting Started
 This is a static site (no build step, no backend) living in `pages/`. To preview it locally:
