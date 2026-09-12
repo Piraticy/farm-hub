@@ -1,6 +1,7 @@
-const CACHE_NAME = 'farmhub-v1';
+const CACHE_NAME = 'farmhub-v2';
 const PRECACHE_URLS = [
     'index.html',
+    'login.html',
     'crops.html',
     'animals.html',
     'employees.html',
@@ -12,6 +13,9 @@ const PRECACHE_URLS = [
     'favicon.svg',
     'assets/theme.css',
     'assets/theme.js',
+    'assets/auth.js',
+    'assets/weather.js',
+    'assets/pwa.js',
     'icons/icon-192.png',
     'icons/icon-512.png'
 ];
