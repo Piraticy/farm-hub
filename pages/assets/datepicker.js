@@ -116,6 +116,7 @@ const FarmHubDatePicker = (function () {
                 btn.addEventListener('click', () => {
                     viewDate = new Date(year, month + Number(btn.dataset.nav), 1);
                     render();
+                    positionPopover();
                 });
             });
             popover.querySelectorAll('.fh-cal-day').forEach((btn) => {
@@ -136,11 +137,53 @@ const FarmHubDatePicker = (function () {
             });
         }
 
+        // The pages that use this all wrap their content in a
+        // scrollable app-shell container (overflow-y: auto), which
+        // clips any absolutely-positioned descendant that renders
+        // outside its own box -- including this popover the moment it
+        // needs to open upward or spill past the container's edge.
+        // Moving it to <body> and switching to position: fixed (the
+        // standard "portal" pattern for floating UI) escapes that
+        // clipping entirely; position is then computed in viewport
+        // coordinates from the trigger's own bounding rect.
+        document.body.appendChild(popover);
+        popover.classList.add('fh-cal-portal');
+
+        // If there isn't room to open downward without covering whatever
+        // sits below the field (a submit button, the next card), and
+        // there's more room above, flip the popover to open upward
+        // instead -- the same way a native <select> dropdown would.
+        //
+        // "Room" here isn't just viewport space: the field usually sits in
+        // a compact form with a submit button right underneath it, well
+        // above the bottom of the viewport. So the real ceiling on
+        // spaceBelow is the nearer of the viewport edge and the bottom of
+        // that enclosing form/card -- whichever the popover would hit first.
+        function positionPopover() {
+            const triggerRect = trigger.getBoundingClientRect();
+            const popoverHeight = popover.offsetHeight;
+            const boundary = trigger.closest('form, details') || document.body;
+            const boundaryBottom = Math.min(window.innerHeight, boundary.getBoundingClientRect().bottom);
+            const spaceBelow = boundaryBottom - triggerRect.bottom;
+            const spaceAbove = triggerRect.top;
+            const openAbove = popoverHeight > spaceBelow - 8 && spaceAbove > spaceBelow;
+
+            popover.style.left = `${triggerRect.left}px`;
+            if (openAbove) {
+                popover.style.top = 'auto';
+                popover.style.bottom = `${window.innerHeight - triggerRect.top + 8}px`;
+            } else {
+                popover.style.bottom = 'auto';
+                popover.style.top = `${triggerRect.bottom + 8}px`;
+            }
+        }
+
         function open() {
             closeAll();
             render();
             popover.classList.remove('hidden');
             trigger.setAttribute('aria-expanded', 'true');
+            positionPopover();
         }
 
         function close() {
@@ -188,6 +231,13 @@ const FarmHubDatePicker = (function () {
                 closeAll();
             }
         });
+        // The popover is fixed-positioned from the trigger's viewport
+        // coordinates at the moment it opens; if the scrollable content
+        // area scrolls after that, those coordinates go stale (the
+        // trigger moves, the popover doesn't). Closing on scroll is
+        // simpler and more standard than re-tracking position on every
+        // scroll event. Capture phase, since scroll doesn't bubble.
+        document.addEventListener('scroll', closeAll, true);
     }
 
     return { init };
