@@ -21,6 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script src="assets/datepicker.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('crops');</script>
 </head>
@@ -107,36 +108,49 @@
                 </svg>
             </summary>
             <form id="addCropForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div class="sm:col-span-2">
                     <label for="cropName" class="block text-sm font-medium text-gray-700 mb-1">Crop Name</label>
                     <input type="text" id="cropName" name="cropName" required placeholder="e.g. Sweet Corn" class="fh-input">
                 </div>
-                <div>
-                    <label for="cropType" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <div class="fh-select-wrap">
-                        <span id="cropTypeIcon" class="fh-select-icon" aria-hidden="true">&#127793;</span>
-                        <select id="cropType" name="cropType" required class="fh-input">
-                            <option value="" disabled selected>Select crop type...</option>
-                            <option value="Vegetables">&#129365; Vegetables</option>
-                            <option value="Fruits">&#127822; Fruits</option>
-                            <option value="Grains">&#127806; Grains</option>
-                            <option value="Herbs">&#127807; Herbs</option>
-                            <option value="Legumes">&#129752; Legumes</option>
-                            <option value="Other">&#128230; Other...</option>
-                        </select>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <div id="cropTypeChips" class="fh-chip-group">
+                        <button type="button" class="fh-chip" data-value="Vegetables"><span class="fh-chip-icon">&#129365;</span><span>Vegetables</span></button>
+                        <button type="button" class="fh-chip" data-value="Fruits"><span class="fh-chip-icon">&#127822;</span><span>Fruits</span></button>
+                        <button type="button" class="fh-chip" data-value="Grains"><span class="fh-chip-icon">&#127806;</span><span>Grains</span></button>
+                        <button type="button" class="fh-chip" data-value="Herbs"><span class="fh-chip-icon">&#127807;</span><span>Herbs</span></button>
+                        <button type="button" class="fh-chip" data-value="Legumes"><span class="fh-chip-icon">&#129752;</span><span>Legumes</span></button>
+                        <button type="button" class="fh-chip" data-value="Other"><span class="fh-chip-icon">&#128230;</span><span>Other...</span></button>
                     </div>
+                    <input type="hidden" id="cropType" name="cropType">
+                    <p id="cropTypeError" class="hidden text-xs text-red-600 mt-1">Please select a crop type.</p>
                 </div>
                 <div id="otherTypeContainer" class="hidden sm:col-span-2">
                     <label for="otherCropType" class="block text-sm font-medium text-gray-700 mb-1">Specify Other Type</label>
                     <input type="text" id="otherCropType" name="otherCropType" class="fh-input">
                 </div>
                 <div>
-                    <label for="plantingDate" class="block text-sm font-medium text-gray-700 mb-1">Planting Date</label>
-                    <input type="date" id="plantingDate" name="plantingDate" required class="fh-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Planting Date</label>
+                    <div class="fh-datepicker" data-datepicker>
+                        <button type="button" class="fh-input fh-date-trigger" aria-haspopup="dialog" aria-expanded="false">
+                            <span class="fh-date-text" data-placeholder="Select date...">Select date...</span>
+                            <span class="fh-date-icon" aria-hidden="true">&#128197;</span>
+                        </button>
+                        <input type="hidden" id="plantingDate" name="plantingDate">
+                        <div class="fh-calendar-popover hidden"></div>
+                    </div>
+                    <p id="plantingDateError" class="hidden text-xs text-red-600 mt-1">Please select a planting date.</p>
                 </div>
                 <div>
-                    <label for="harvestDate" class="block text-sm font-medium text-gray-700 mb-1">Expected Harvest Date</label>
-                    <input type="date" id="harvestDate" name="harvestDate" class="fh-input">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Expected Harvest Date</label>
+                    <div class="fh-datepicker" data-datepicker>
+                        <button type="button" class="fh-input fh-date-trigger" aria-haspopup="dialog" aria-expanded="false">
+                            <span class="fh-date-text" data-placeholder="Select date...">Select date...</span>
+                            <span class="fh-date-icon" aria-hidden="true">&#128197;</span>
+                        </button>
+                        <input type="hidden" id="harvestDate" name="harvestDate">
+                        <div class="fh-calendar-popover hidden"></div>
+                    </div>
                 </div>
                 <div class="sm:col-span-2">
                     <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
@@ -191,19 +205,15 @@
         const loadingMessage = document.getElementById('loadingMessage');
         const noCropsMessage = document.getElementById('noCropsMessage');
         const downloadBtn = document.getElementById('downloadBtn');
-        const cropTypeSelect = document.getElementById('cropType');
-        const cropTypeIcon = document.getElementById('cropTypeIcon');
+        const cropTypeHidden = document.getElementById('cropType');
+        const cropTypeChips = Array.from(document.querySelectorAll('#cropTypeChips .fh-chip'));
+        const cropTypeError = document.getElementById('cropTypeError');
         const otherTypeContainer = document.getElementById('otherTypeContainer');
         const otherCropTypeInput = document.getElementById('otherCropType');
+        const plantingDateHidden = document.getElementById('plantingDate');
+        const plantingDateError = document.getElementById('plantingDateError');
 
-        const CROP_TYPE_ICONS = {
-            Vegetables: '\u{1F955}',
-            Fruits: '\u{1F34E}',
-            Grains: '\u{1F33E}',
-            Herbs: '\u{1F33F}',
-            Legumes: '\u{1FAD8}',
-            Other: '\u{1F4E6}'
-        };
+        FarmHubDatePicker.init('[data-datepicker]');
 
         let allCropsData = loadCrops();
 
@@ -271,17 +281,43 @@
             downloadCSV(allCropsData);
         });
 
-        // Event listener for the crop type dropdown: show/hide the "Other"
-        // input, and swap the icon shown inside the field to match.
-        cropTypeSelect.addEventListener('change', (event) => {
-            if (event.target.value === 'Other') {
+        // Crop type is a visible chip group (not a dropdown) so every
+        // option is on screen at once. Clicking a chip selects it,
+        // stores its value in the hidden field the rest of the form
+        // logic reads, and shows/hides the "Other" input.
+        function selectCropType(value) {
+            cropTypeChips.forEach((chip) => chip.classList.toggle('is-selected', chip.dataset.value === value));
+            cropTypeHidden.value = value;
+            cropTypeError.classList.add('hidden');
+            if (value === 'Other') {
                 otherTypeContainer.classList.remove('hidden');
                 otherCropTypeInput.required = true;
             } else {
                 otherTypeContainer.classList.add('hidden');
                 otherCropTypeInput.required = false;
             }
-            cropTypeIcon.textContent = CROP_TYPE_ICONS[event.target.value] || '\u{1F331}';
+        }
+
+        cropTypeChips.forEach((chip) => {
+            chip.addEventListener('click', () => selectCropType(chip.dataset.value));
+        });
+
+        plantingDateHidden.addEventListener('change', () => {
+            if (plantingDateHidden.value) {
+                plantingDateError.classList.add('hidden');
+            }
+        });
+
+        // The chip group and date pickers aren't native form controls, so
+        // their "required" state can't rely on the browser's own
+        // constraint validation -- checked here instead.
+        addCropForm.addEventListener('reset', () => {
+            cropTypeChips.forEach((chip) => chip.classList.remove('is-selected'));
+            cropTypeHidden.value = '';
+            cropTypeError.classList.add('hidden');
+            plantingDateError.classList.add('hidden');
+            otherTypeContainer.classList.add('hidden');
+            otherCropTypeInput.required = false;
         });
 
         // Handle form submission to add a new crop
@@ -289,14 +325,31 @@
             e.preventDefault();
             const form = e.target;
 
-            const selectedCropType = form.cropType.value;
+            let valid = true;
+            if (!cropTypeHidden.value) {
+                cropTypeError.classList.remove('hidden');
+                valid = false;
+            }
+            if (!plantingDateHidden.value) {
+                plantingDateError.classList.remove('hidden');
+                valid = false;
+            }
+            if (!valid) {
+                return;
+            }
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const selectedCropType = cropTypeHidden.value;
             const finalCropType = selectedCropType === 'Other' ? form.otherCropType.value : selectedCropType;
 
             const cropData = {
                 id: crypto.randomUUID(),
                 cropName: form.cropName.value,
                 cropType: finalCropType,
-                plantingDate: form.plantingDate.value,
+                plantingDate: plantingDateHidden.value,
                 harvestDate: form.harvestDate.value,
                 location: form.location.value,
                 notes: form.notes.value
@@ -307,8 +360,6 @@
             saveCrops(allCropsData);
             renderCropsTable(allCropsData);
             form.reset();
-            otherTypeContainer.classList.add('hidden');
-            cropTypeIcon.textContent = '\u{1F331}';
         });
 
         renderCropsTable(allCropsData);
