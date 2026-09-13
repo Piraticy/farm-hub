@@ -174,26 +174,21 @@ body.dark-mode .fh-input::placeholder {
 /* Crop type chip group: a visible, always-on-screen set of options
    instead of a dropdown you have to open to see the choices. */
 .fh-chip-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-}
-
-@media (min-width: 640px) {
-    .fh-chip-group {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
 .fh-chip {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    gap: 0.4rem;
+    flex: 0 0 auto;
+    padding: 0.4rem 0.65rem;
     border-radius: 0.5rem;
     border: 1px solid #d1d5db;
     background: #ffffff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #374151;
     cursor: pointer;
     transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
