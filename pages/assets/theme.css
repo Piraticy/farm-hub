@@ -3,11 +3,17 @@
    Centralized so every page shares one accent color and one working
    implementation instead of near-identical copies in each page. */
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f7fdee;
     color: #1a202c;
     transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .brand-mark {
@@ -118,28 +124,28 @@ body.dark-mode .text-green-700 {
 }
 
 .fh-blob {
-    position: fixed;
+    position: absolute;
     border-radius: 9999px;
-    filter: blur(70px);
-    opacity: 0.35;
+    filter: blur(50px);
+    opacity: 0.16;
     pointer-events: none;
     z-index: -1;
 }
 
 .fh-blob-a {
-    top: -120px;
-    left: -80px;
-    width: 320px;
-    height: 320px;
+    top: -80px;
+    left: -70px;
+    width: 200px;
+    height: 200px;
     background: #6ee7b7;
     animation: fh-float-a 16s ease-in-out infinite;
 }
 
 .fh-blob-b {
-    bottom: -140px;
-    right: -100px;
-    width: 360px;
-    height: 360px;
+    bottom: -90px;
+    right: -70px;
+    width: 220px;
+    height: 220px;
     background: #93c5fd;
     animation: fh-float-b 18s ease-in-out infinite;
 }
