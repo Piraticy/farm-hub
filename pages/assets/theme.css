@@ -16,6 +16,29 @@ body {
     overflow-x: hidden;
 }
 
+/* App shell: the header and nav-tabs bar stay fixed on screen; only the
+   content area below them scrolls, so the page itself never scrolls even
+   when a table/list is longer than the viewport. Falls back gracefully
+   (whole page scrolls) in the rare case dvh isn't supported. */
+.fh-shell {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fh-shell-header,
+.fh-shell-nav {
+    flex-shrink: 0;
+}
+
+.fh-shell-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
 .brand-mark {
     display: inline-flex;
     align-items: center;
@@ -103,6 +126,73 @@ body.dark-mode .text-green-600 {
 
 body.dark-mode .text-green-700 {
     color: #68d391;
+}
+
+body.dark-mode .text-gray-800 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .text-gray-900 {
+    color: #f7fafc;
+}
+
+body.dark-mode .bg-gray-50 {
+    background-color: #1a202c;
+}
+
+/* Shared form-field styling (currently used by the Crops page). One
+   class instead of a long repeated Tailwind utility chain per input,
+   and it's what makes dark-mode support and the date-picker icon fix
+   possible in one place. */
+.fh-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fh-input:focus {
+    outline: none;
+    border-color: #65a30d;
+    box-shadow: 0 0 0 3px rgba(101, 163, 13, 0.25);
+}
+
+body.dark-mode .fh-input {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .fh-input::placeholder {
+    color: #a0aec0;
+}
+
+/* Native date-input calendar glyph defaults to a dark icon that's
+   invisible against a dark-mode field background. */
+body.dark-mode input[type="date"].fh-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.fh-select-wrap {
+    position: relative;
+}
+
+.fh-select-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.fh-select-wrap .fh-input {
+    padding-left: 2.25rem;
 }
 
 /* Dashboard-only motion & gesture affordances (index.html). Scoped by
@@ -194,6 +284,15 @@ body.dark-mode .fh-blob-b {
     position: relative;
     overflow: hidden;
     border-radius: 1rem;
+    /* Grid rows stretch every wrap to match the tallest card in that row
+       (CSS Grid's default align-items: stretch); without this, a wrap
+       taller than its own card leaves a gap at the bottom where the
+       pin-action gradient behind it shows through. */
+    height: 100%;
+}
+
+.fh-card-wrap .fh-card {
+    height: 100%;
 }
 
 .fh-pin-action {
