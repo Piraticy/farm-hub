@@ -144,13 +144,21 @@ body.dark-mode .bg-gray-50 {
    class instead of a long repeated Tailwind utility chain per input,
    and it's what makes dark-mode support and the date-picker icon fix
    possible in one place. */
+/* !important on the box-model/appearance properties here and in the
+   other .fh-* component rules below is deliberate: these elements are
+   often <button>s, and the Tailwind CDN script's injected reset can
+   tie in specificity with a plain class selector (e.g. its
+   `[type='button']` rule vs. our `.fh-chip`) and win depending on
+   when its stylesheet lands relative to this one -- not reliably
+   reproducible, so this makes the outcome deterministic instead. */
 .fh-input {
-    display: block;
+    display: block !important;
     width: 100%;
     border-radius: 0.5rem;
-    border: 1px solid #d1d5db;
-    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db !important;
+    padding: 0.5rem 0.75rem !important;
     font-size: 0.875rem;
+    background-color: #ffffff !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -162,8 +170,8 @@ body.dark-mode .bg-gray-50 {
 }
 
 body.dark-mode .fh-input {
-    background-color: #2d3748;
-    border-color: #4a5568;
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
     color: #e2e8f0;
 }
 
@@ -174,34 +182,34 @@ body.dark-mode .fh-input::placeholder {
 /* Crop type chip group: a visible, always-on-screen set of options
    instead of a dropdown you have to open to see the choices. */
 .fh-chip-group {
-    display: flex;
+    display: flex !important;
     flex-wrap: wrap;
     gap: 0.4rem;
 }
 
 .fh-chip {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 0.4rem;
     flex: 0 0 auto;
-    padding: 0.4rem 0.65rem;
+    padding: 0.4rem 0.65rem !important;
     border-radius: 0.5rem;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
+    border: 1px solid #d1d5db !important;
+    background-color: #ffffff !important;
     font-size: 0.8rem;
-    color: #374151;
+    color: #374151 !important;
     cursor: pointer;
     transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .fh-chip:hover {
-    border-color: #a3e635;
+    border-color: #a3e635 !important;
 }
 
 .fh-chip.is-selected {
-    border-color: #65a30d;
-    background-color: #ecfccb;
-    color: #365314;
+    border-color: #65a30d !important;
+    background-color: #ecfccb !important;
+    color: #365314 !important;
     font-weight: 600;
 }
 
@@ -211,15 +219,15 @@ body.dark-mode .fh-input::placeholder {
 }
 
 body.dark-mode .fh-chip {
-    background-color: #2d3748;
-    border-color: #4a5568;
-    color: #e2e8f0;
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+    color: #e2e8f0 !important;
 }
 
 body.dark-mode .fh-chip.is-selected {
-    background-color: #365314;
-    border-color: #84cc16;
-    color: #ecfccb;
+    background-color: #365314 !important;
+    border-color: #84cc16 !important;
+    color: #ecfccb !important;
 }
 
 /* Custom calendar date picker: native <input type="date"> popups are a
@@ -230,14 +238,13 @@ body.dark-mode .fh-chip.is-selected {
 }
 
 .fh-date-trigger {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
     width: 100%;
     text-align: left;
     cursor: pointer;
-    background-color: #ffffff;
 }
 
 .fh-date-icon {
@@ -277,18 +284,18 @@ body.dark-mode .fh-chip.is-selected {
     width: 28px;
     height: 28px;
     border-radius: 9999px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    background: #f3f4f6;
-    border: none;
+    background-color: #f3f4f6 !important;
+    border: none !important;
     cursor: pointer;
     font-size: 1rem;
     line-height: 1;
 }
 
 .fh-cal-nav:hover {
-    background: #e5e7eb;
+    background-color: #e5e7eb !important;
 }
 
 .fh-cal-weekdays {
@@ -309,26 +316,26 @@ body.dark-mode .fh-chip.is-selected {
 .fh-cal-day {
     width: 100%;
     aspect-ratio: 1;
-    border: none;
-    background: transparent;
+    border: none !important;
+    background-color: transparent !important;
     border-radius: 9999px;
     font-size: 0.8rem;
     cursor: pointer;
-    color: #1f2937;
+    color: #1f2937 !important;
 }
 
 .fh-cal-day:hover {
-    background: #ecfccb;
+    background-color: #ecfccb !important;
 }
 
 .fh-cal-day.is-today {
     font-weight: 700;
-    color: #65a30d;
+    color: #65a30d !important;
 }
 
 .fh-cal-day.is-selected {
-    background: #65a30d;
-    color: #ffffff;
+    background-color: #65a30d !important;
+    color: #ffffff !important;
 }
 
 .fh-cal-footer {
@@ -342,18 +349,14 @@ body.dark-mode .fh-chip.is-selected {
 .fh-cal-footer button {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #65a30d;
-    background: none;
-    border: none;
+    color: #65a30d !important;
+    background-color: transparent !important;
+    border: none !important;
     cursor: pointer;
 }
 
 .fh-cal-footer button:hover {
     text-decoration: underline;
-}
-
-body.dark-mode .fh-date-trigger {
-    background-color: #2d3748;
 }
 
 body.dark-mode .fh-calendar-popover {
@@ -370,20 +373,20 @@ body.dark-mode .fh-cal-weekdays {
 }
 
 body.dark-mode .fh-cal-day {
-    color: #e2e8f0;
+    color: #e2e8f0 !important;
 }
 
 body.dark-mode .fh-cal-day:hover {
-    background: #4a5568;
+    background-color: #4a5568 !important;
 }
 
 body.dark-mode .fh-cal-nav {
-    background: #4a5568;
+    background-color: #4a5568 !important;
     color: #e2e8f0;
 }
 
 body.dark-mode .fh-cal-nav:hover {
-    background: #5a6578;
+    background-color: #5a6578 !important;
 }
 
 body.dark-mode .fh-cal-footer {
@@ -509,17 +512,17 @@ body.dark-mode .fh-pin-action {
     width: 44px;
     height: 44px;
     border-radius: 9999px;
-    background: #f59e0b;
-    color: #ffffff;
-    display: flex;
+    background-color: #f59e0b !important;
+    color: #ffffff !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    border: none;
+    border: none !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .fh-pin-btn.fh-pinned {
-    background: #b45309;
+    background-color: #b45309 !important;
 }
 
 .fh-pin-star {
