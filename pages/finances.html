@@ -36,6 +36,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script src="assets/datepicker.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('finances');</script>
 </head>
@@ -130,76 +131,87 @@
         </div>
 
         <!-- Add New Transaction Section -->
-        <details class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <details class="bg-white rounded-2xl shadow-lg p-6 mb-8 max-w-2xl mx-auto">
             <summary class="flex justify-between items-center cursor-pointer text-2xl font-semibold text-gray-800 mb-4 focus:outline-none">
                 <span>Add New Transaction</span>
                 <svg class="details-summary-icon w-6 h-6 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
             </summary>
-            <form id="addTransactionForm" class="space-y-4">
-                <div>
-                    <label for="transactionType" class="block text-sm font-medium text-gray-700">Type</label>
-                    <select id="transactionType" name="transactionType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                        <option value="" disabled selected>Select type...</option>
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                    </select>
+            <form id="addTransactionForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <div id="transactionTypeChips" class="fh-chip-group">
+                        <button type="button" class="fh-chip" data-value="Income"><span class="fh-chip-icon">&#128176;</span><span>Income</span></button>
+                        <button type="button" class="fh-chip" data-value="Expense"><span class="fh-chip-icon">&#128181;</span><span>Expense</span></button>
+                    </div>
+                    <input type="hidden" id="transactionType" name="transactionType">
+                    <p id="transactionTypeError" class="hidden text-xs text-red-600 mt-1">Please select a transaction type.</p>
                 </div>
                 <!-- Income Fields -->
-                <div id="incomeFieldsContainer" class="hidden space-y-4">
-                    <div>
-                        <label for="incomeSource" class="block text-sm font-medium text-gray-700">Source</label>
-                        <select id="incomeSource" name="incomeSource" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                            <option value="" disabled selected>Select source...</option>
-                            <option value="Crops">Crops</option>
-                            <option value="Animals">Animals</option>
-                            <option value="Loan">Loan</option>
-                            <option value="Investment">Investment</option>
-                            <option value="Other">Other</option>
-                        </select>
+                <div id="incomeFieldsContainer" class="hidden sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                        <div id="incomeSourceChips" class="fh-chip-group">
+                            <button type="button" class="fh-chip" data-value="Crops"><span class="fh-chip-icon">&#127806;</span><span>Crops</span></button>
+                            <button type="button" class="fh-chip" data-value="Animals"><span class="fh-chip-icon">&#128046;</span><span>Animals</span></button>
+                            <button type="button" class="fh-chip" data-value="Loan"><span class="fh-chip-icon">&#127974;</span><span>Loan</span></button>
+                            <button type="button" class="fh-chip" data-value="Investment"><span class="fh-chip-icon">&#128200;</span><span>Investment</span></button>
+                            <button type="button" class="fh-chip" data-value="Other"><span class="fh-chip-icon">&#128230;</span><span>Other</span></button>
+                        </div>
+                        <input type="hidden" id="incomeSource" name="incomeSource">
                     </div>
-                    <div id="relatedIncomeItemContainer" class="hidden">
-                        <label for="relatedIncomeItem" class="block text-sm font-medium text-gray-700">Related Item</label>
-                        <select id="relatedIncomeItem" name="relatedIncomeItem" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></select>
+                    <div id="relatedIncomeItemContainer" class="hidden sm:col-span-2">
+                        <label for="relatedIncomeItem" class="block text-sm font-medium text-gray-700 mb-1">Related Item</label>
+                        <select id="relatedIncomeItem" name="relatedIncomeItem" class="fh-input"></select>
                     </div>
                 </div>
 
                 <!-- Expense Fields -->
-                <div id="expenseFieldsContainer" class="hidden space-y-4">
-                    <div>
-                        <label for="expenseCategory" class="block text-sm font-medium text-gray-700">Category</label>
-                        <select id="expenseCategory" name="expenseCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                            <option value="" disabled selected>Select category...</option>
-                            <option value="Labor">Labor</option>
-                            <option value="Supplies">Supplies</option>
-                            <option value="Fuel">Fuel</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Utilities">Utilities</option>
-                            <option value="Other">Other</option>
-                        </select>
+                <div id="expenseFieldsContainer" class="hidden sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <div id="expenseCategoryChips" class="fh-chip-group">
+                            <button type="button" class="fh-chip" data-value="Labor"><span class="fh-chip-icon">&#128119;</span><span>Labor</span></button>
+                            <button type="button" class="fh-chip" data-value="Supplies"><span class="fh-chip-icon">&#128230;</span><span>Supplies</span></button>
+                            <button type="button" class="fh-chip" data-value="Fuel"><span class="fh-chip-icon">&#9981;&#65039;</span><span>Fuel</span></button>
+                            <button type="button" class="fh-chip" data-value="Maintenance"><span class="fh-chip-icon">&#128295;</span><span>Maintenance</span></button>
+                            <button type="button" class="fh-chip" data-value="Utilities"><span class="fh-chip-icon">&#128161;</span><span>Utilities</span></button>
+                            <button type="button" class="fh-chip" data-value="Other"><span class="fh-chip-icon">&#128194;</span><span>Other</span></button>
+                        </div>
+                        <input type="hidden" id="expenseCategory" name="expenseCategory">
                     </div>
-                    <div id="relatedExpenseItemContainer" class="hidden">
-                        <label for="relatedExpenseItem" class="block text-sm font-medium text-gray-700">Related Inventory Item</label>
-                        <select id="relatedExpenseItem" name="relatedExpenseItem" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></select>
+                    <div id="relatedExpenseItemContainer" class="hidden sm:col-span-2">
+                        <label for="relatedExpenseItem" class="block text-sm font-medium text-gray-700 mb-1">Related Inventory Item</label>
+                        <select id="relatedExpenseItem" name="relatedExpenseItem" class="fh-input"></select>
                     </div>
                 </div>
-                
+
                 <!-- Common fields for all transactions -->
                 <div>
-                    <label for="transactionDate" class="block text-sm font-medium text-gray-700">Date</label>
-                    <input type="date" id="transactionDate" name="transactionDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <div class="fh-datepicker" data-datepicker>
+                        <button type="button" class="fh-input fh-date-trigger" aria-haspopup="dialog" aria-expanded="false">
+                            <span class="fh-date-text" data-placeholder="Select date...">Select date...</span>
+                            <span class="fh-date-icon" aria-hidden="true">&#128197;</span>
+                        </button>
+                        <input type="hidden" id="transactionDate" name="transactionDate">
+                        <div class="fh-calendar-popover hidden"></div>
+                    </div>
+                    <p id="transactionDateError" class="hidden text-xs text-red-600 mt-1">Please select a date.</p>
                 </div>
                 <div>
-                    <label for="transactionDescription" class="block text-sm font-medium text-gray-700">Description</label>
-                    <input type="text" id="transactionDescription" name="transactionDescription" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label for="transactionAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
+                    <input type="number" step="0.01" id="transactionAmount" name="transactionAmount" required class="fh-input">
                 </div>
-                <div>
-                    <label for="transactionAmount" class="block text-sm font-medium text-gray-700">Amount ($)</label>
-                    <input type="number" step="0.01" id="transactionAmount" name="transactionAmount" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                <div class="sm:col-span-2">
+                    <label for="transactionDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <input type="text" id="transactionDescription" name="transactionDescription" required class="fh-input">
                 </div>
-                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Add Transaction</button>
-                <div id="statusMessage" class="mt-2 text-sm text-center"></div>
+                <div class="sm:col-span-2">
+                    <button type="submit" class="w-full py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">Add Transaction</button>
+                </div>
+                <div id="statusMessage" class="sm:col-span-2 text-sm text-center"></div>
             </form>
         </details>
 
@@ -264,6 +276,46 @@
             const expenseCategoryEl = document.getElementById('expenseCategory');
             const relatedExpenseItemEl = document.getElementById('relatedExpenseItem');
             const relatedExpenseItemContainerEl = document.getElementById('relatedExpenseItemContainer');
+
+            const transactionTypeError = document.getElementById('transactionTypeError');
+            const transactionDateError = document.getElementById('transactionDateError');
+
+            FarmHubDatePicker.init('[data-datepicker]');
+
+            // Wires a chip group to a hidden input, dispatching a native
+            // 'change' event on selection so the existing field-toggling
+            // logic below (written for a <select>) keeps working unchanged.
+            function wireChipGroup(groupId, hiddenInput, onSelect) {
+                const chips = Array.from(document.querySelectorAll(`#${groupId} .fh-chip`));
+                chips.forEach((chip) => {
+                    chip.addEventListener('click', () => {
+                        chips.forEach((c) => c.classList.toggle('is-selected', c === chip));
+                        hiddenInput.value = chip.dataset.value;
+                        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        if (onSelect) {
+                            onSelect();
+                        }
+                    });
+                });
+            }
+
+            wireChipGroup('transactionTypeChips', transactionTypeEl, () => {
+                transactionTypeError.classList.add('hidden');
+            });
+            wireChipGroup('incomeSourceChips', incomeSourceEl);
+            wireChipGroup('expenseCategoryChips', expenseCategoryEl);
+
+            transactionDateEl.addEventListener('change', () => {
+                if (transactionDateEl.value) {
+                    transactionDateError.classList.add('hidden');
+                }
+            });
+
+            addTransactionForm.addEventListener('reset', () => {
+                document.querySelectorAll('#addTransactionForm .fh-chip.is-selected').forEach((chip) => chip.classList.remove('is-selected'));
+                transactionTypeError.classList.add('hidden');
+                transactionDateError.classList.add('hidden');
+            });
 
             const STORAGE_KEY = 'farmhub_finances';
             const loadTransactions = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -491,6 +543,24 @@
                 addTransactionForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     const form = e.target;
+
+                    let valid = true;
+                    if (!transactionTypeEl.value) {
+                        transactionTypeError.classList.remove('hidden');
+                        valid = false;
+                    }
+                    if (!transactionDateEl.value) {
+                        transactionDateError.classList.remove('hidden');
+                        valid = false;
+                    }
+                    if (!valid) {
+                        return;
+                    }
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
                     const type = form.transactionType.value;
                     let relatedSource = '';
                     let relatedItem = '';

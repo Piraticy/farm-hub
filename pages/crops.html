@@ -107,10 +107,14 @@
                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
             </summary>
-            <form id="addCropForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="sm:col-span-2">
+            <form id="addCropForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
                     <label for="cropName" class="block text-sm font-medium text-gray-700 mb-1">Crop Name</label>
                     <input type="text" id="cropName" name="cropName" required placeholder="e.g. Sweet Corn" class="fh-input">
+                </div>
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input type="text" id="location" name="location" placeholder="e.g. North Field" class="fh-input">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
@@ -153,12 +157,8 @@
                     </div>
                 </div>
                 <div class="sm:col-span-2">
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <input type="text" id="location" name="location" placeholder="e.g. North Field" class="fh-input">
-                </div>
-                <div class="sm:col-span-2">
                     <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                    <textarea id="notes" name="notes" rows="3" class="fh-input"></textarea>
+                    <textarea id="notes" name="notes" rows="2" class="fh-input"></textarea>
                 </div>
                 <div class="sm:col-span-2">
                     <button type="submit" class="w-full py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-lime-600 hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500 transition-colors duration-200">Add Crop</button>
