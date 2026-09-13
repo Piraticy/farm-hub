@@ -248,6 +248,12 @@
     }
 
     function initPullToRefresh() {
+        // The page itself (window/body) no longer scrolls under the
+        // app-shell layout -- only .fh-shell-content does -- so "at the
+        // top" has to be read from that container, not window.scrollY.
+        const scroller = document.querySelector('.fh-shell-content') || window;
+        const getScrollTop = () => (scroller === window ? window.scrollY : scroller.scrollTop);
+
         const indicator = document.createElement('div');
         indicator.className = 'fh-ptr-indicator';
         indicator.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
@@ -261,7 +267,7 @@
         let verticalPull = false;
 
         window.addEventListener('touchstart', (e) => {
-            if (window.scrollY > 0 || e.touches.length !== 1) {
+            if (getScrollTop() > 0 || e.touches.length !== 1) {
                 return;
             }
             startX = e.touches[0].clientX;

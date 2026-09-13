@@ -24,10 +24,10 @@
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('crops');</script>
 </head>
-<body class="bg-gray-100" data-page="crops">
+<body class="bg-gray-100 fh-shell" data-page="crops">
 
     <!-- Header -->
-    <header class="bg-white shadow-sm py-4 sm:py-6 sticky top-0 z-20">
+    <header class="bg-white shadow-sm py-4 sm:py-6 fh-shell-header">
         <div class="container mx-auto px-4 flex items-center justify-between gap-2 sm:gap-4">
             <a href="index.html" class="brand-mark">
                 <img src="favicon.svg" alt="">
@@ -61,7 +61,7 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 pt-4 fh-shell-nav">
 
         <!-- Dashboard Navigation Tabs -->
         <div class="bg-white rounded-2xl shadow-lg p-2 mb-8 flex flex-wrap justify-center gap-2">
@@ -94,6 +94,9 @@
                 <span>Inventory</span>
             </a>
         </div>
+    </div>
+
+    <main class="container mx-auto px-4 pb-8 fh-shell-content">
 
         <!-- Add New Crop Collapsible Section -->
         <details class="bg-white rounded-2xl shadow-lg p-6 mb-8">
@@ -103,45 +106,49 @@
                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
             </summary>
-            <form id="addCropForm" class="space-y-4">
+            <form id="addCropForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label for="cropName" class="block text-sm font-medium text-gray-700">Crop Name</label>
-                    <input type="text" id="cropName" name="cropName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                </div>
-                <div>
-                    <label for="cropType" class="block text-sm font-medium text-gray-700">Type</label>
-                    <select id="cropType" name="cropType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                        <!-- New placeholder option added here -->
-                        <option value="" disabled selected>Select Crop Type...</option>
-                        <option value="Vegetables">Vegetables</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Grains">Grains</option>
-                        <option value="Herbs">Herbs</option>
-                        <option value="Legumes">Legumes</option>
-                        <option value="Other">Other...</option>
-                    </select>
-                </div>
-                <div id="otherTypeContainer" class="hidden">
-                    <label for="otherCropType" class="block text-sm font-medium text-gray-700">Specify Other Type</label>
-                    <input type="text" id="otherCropType" name="otherCropType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label for="cropName" class="block text-sm font-medium text-gray-700 mb-1">Crop Name</label>
+                    <input type="text" id="cropName" name="cropName" required placeholder="e.g. Sweet Corn" class="fh-input">
                 </div>
                 <div>
-                    <label for="plantingDate" class="block text-sm font-medium text-gray-700">Planting Date</label>
-                    <input type="date" id="plantingDate" name="plantingDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label for="cropType" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <div class="fh-select-wrap">
+                        <span id="cropTypeIcon" class="fh-select-icon" aria-hidden="true">&#127793;</span>
+                        <select id="cropType" name="cropType" required class="fh-input">
+                            <option value="" disabled selected>Select crop type...</option>
+                            <option value="Vegetables">&#129365; Vegetables</option>
+                            <option value="Fruits">&#127822; Fruits</option>
+                            <option value="Grains">&#127806; Grains</option>
+                            <option value="Herbs">&#127807; Herbs</option>
+                            <option value="Legumes">&#129752; Legumes</option>
+                            <option value="Other">&#128230; Other...</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="otherTypeContainer" class="hidden sm:col-span-2">
+                    <label for="otherCropType" class="block text-sm font-medium text-gray-700 mb-1">Specify Other Type</label>
+                    <input type="text" id="otherCropType" name="otherCropType" class="fh-input">
                 </div>
                 <div>
-                    <label for="harvestDate" class="block text-sm font-medium text-gray-700">Expected Harvest Date</label>
-                    <input type="date" id="harvestDate" name="harvestDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label for="plantingDate" class="block text-sm font-medium text-gray-700 mb-1">Planting Date</label>
+                    <input type="date" id="plantingDate" name="plantingDate" required class="fh-input">
                 </div>
                 <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
-                    <input type="text" id="location" name="location" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <label for="harvestDate" class="block text-sm font-medium text-gray-700 mb-1">Expected Harvest Date</label>
+                    <input type="date" id="harvestDate" name="harvestDate" class="fh-input">
                 </div>
-                <div>
-                    <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
-                    <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"></textarea>
+                <div class="sm:col-span-2">
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input type="text" id="location" name="location" placeholder="e.g. North Field" class="fh-input">
                 </div>
-                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Add Crop</button>
+                <div class="sm:col-span-2">
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea id="notes" name="notes" rows="3" class="fh-input"></textarea>
+                </div>
+                <div class="sm:col-span-2">
+                    <button type="submit" class="w-full py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-lime-600 hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500 transition-colors duration-200">Add Crop</button>
+                </div>
             </form>
         </details>
 
@@ -185,8 +192,18 @@
         const noCropsMessage = document.getElementById('noCropsMessage');
         const downloadBtn = document.getElementById('downloadBtn');
         const cropTypeSelect = document.getElementById('cropType');
+        const cropTypeIcon = document.getElementById('cropTypeIcon');
         const otherTypeContainer = document.getElementById('otherTypeContainer');
         const otherCropTypeInput = document.getElementById('otherCropType');
+
+        const CROP_TYPE_ICONS = {
+            Vegetables: '\u{1F955}',
+            Fruits: '\u{1F34E}',
+            Grains: '\u{1F33E}',
+            Herbs: '\u{1F33F}',
+            Legumes: '\u{1FAD8}',
+            Other: '\u{1F4E6}'
+        };
 
         let allCropsData = loadCrops();
 
@@ -254,7 +271,8 @@
             downloadCSV(allCropsData);
         });
 
-        // Event listener for the crop type dropdown to show/hide the "Other" input
+        // Event listener for the crop type dropdown: show/hide the "Other"
+        // input, and swap the icon shown inside the field to match.
         cropTypeSelect.addEventListener('change', (event) => {
             if (event.target.value === 'Other') {
                 otherTypeContainer.classList.remove('hidden');
@@ -263,6 +281,7 @@
                 otherTypeContainer.classList.add('hidden');
                 otherCropTypeInput.required = false;
             }
+            cropTypeIcon.textContent = CROP_TYPE_ICONS[event.target.value] || '\u{1F331}';
         });
 
         // Handle form submission to add a new crop
@@ -288,6 +307,8 @@
             saveCrops(allCropsData);
             renderCropsTable(allCropsData);
             form.reset();
+            otherTypeContainer.classList.add('hidden');
+            cropTypeIcon.textContent = '\u{1F331}';
         });
 
         renderCropsTable(allCropsData);
