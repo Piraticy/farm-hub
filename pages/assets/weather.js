@@ -106,7 +106,7 @@ const FarmHubWeather = (function () {
             try {
                 const loc = await geocode(query);
                 if (!loc) {
-                    renderLocationForm(card, `Couldn't find "${query}". Try another search.`);
+                    renderLocationForm(card, `Couldn't find "${FarmHubUtil.escapeHtml(query)}". Try another search.`);
                     return;
                 }
                 saveLocation(loc);
@@ -128,7 +128,7 @@ const FarmHubWeather = (function () {
                 <div class="min-w-0">
                     <p class="text-3xl font-bold text-gray-800">${temp}°F <span class="text-2xl align-middle">${emoji}</span></p>
                     <p class="text-gray-500 text-sm mt-1">${label}${high !== null ? ` · H:${high}° L:${low}°` : ''}</p>
-                    <p class="text-gray-400 text-xs mt-1 truncate">${loc.label || 'Current location'}</p>
+                    <p class="text-gray-400 text-xs mt-1 truncate">${FarmHubUtil.escapeHtml(loc.label || 'Current location')}</p>
                 </div>
                 <button id="fhChangeLocation" type="button" class="text-xs text-emerald-700 underline shrink-0">Change</button>
             </div>
