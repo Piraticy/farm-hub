@@ -62,25 +62,36 @@ body {
     font-weight: 600;
 }
 
-/* The nav pill's 7 links are `flex flex-wrap justify-center` on every
-   page, which reads fine on desktop (one row) but on a narrow phone
-   wraps into an uneven, loosely-centered pile -- each row's items
-   have different widths, so nothing lines up into columns. Below the
-   sm breakpoint, lay it out as a real 2-column grid instead so every
-   link gets an even, aligned cell; the lone 7th item spans both
-   columns rather than sitting off-center in a half-empty row. */
+/* The nav pill's 7 links take up a lot of vertical space on a phone --
+   even arranged into a clean grid, it's most of a screen's height
+   before any real page content shows. Below the sm breakpoint it's
+   collapsed by default and only shown once #navToggleBtn (in the
+   header, next to the logout/theme icons) opens it; on tap it lays
+   out as a real 2-column grid, with the lone 7th item spanning both
+   columns rather than sitting off-center in a half-empty row.
+   !important on the `display` toggle here for the same reason as
+   .fh-input et al.: `.fh-nav-tabs` and Tailwind's own `.flex` utility
+   (also present on this element) tie in specificity, so whichever
+   stylesheet the CDN script happens to inject last wins the cascade
+   -- not reliably reproducible, so this makes the outcome
+   deterministic instead of leaving the menu stuck open or unreachable
+   depending on load timing. */
 @media (max-width: 639px) {
     .fh-nav-tabs {
-        display: grid;
+        display: none !important;
+    }
+
+    .fh-nav-tabs.fh-nav-open {
+        display: grid !important;
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .fh-nav-tabs > a {
+    .fh-nav-tabs.fh-nav-open > a {
         justify-content: center;
         text-align: center;
     }
 
-    .fh-nav-tabs > a:last-child:nth-child(odd) {
+    .fh-nav-tabs.fh-nav-open > a:last-child:nth-child(odd) {
         grid-column: 1 / -1;
     }
 }
