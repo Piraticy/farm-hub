@@ -1,7 +1,8 @@
-// Dashboard-only interactions: staggered entrance animation, tap ripple
-// feedback, swipe-to-navigate between sections, pull-to-refresh, and
-// swipeable "pin to top" section cards. Only index.html loads this file,
-// so nothing here runs on any other page.
+// Dashboard-only interactions: the greeting/date header and quick-stats
+// row, staggered entrance animation, tap ripple feedback, swipe-to-navigate
+// between sections, pull-to-refresh, and swipeable "pin to top" section
+// cards. Only index.html loads this file, so nothing here runs on any
+// other page.
 (function () {
     const PIN_KEY = 'farmhub_pinned_features';
     const OPEN_OFFSET = -76;
@@ -179,6 +180,60 @@
         applyOrder();
     }
 
+    function initGreeting() {
+        const el = document.getElementById('fhGreeting');
+        const dateEl = document.getElementById('fhTodayDate');
+        if (!el || !dateEl) {
+            return;
+        }
+        const hour = new Date().getHours();
+        el.textContent = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+        dateEl.textContent = new Date().toLocaleDateString(undefined, {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    }
+
+    function formatCurrency(amount) {
+        const sign = amount < 0 ? '-' : '';
+        return `${sign}$${Math.abs(Math.round(amount)).toLocaleString()}`;
+    }
+
+    function initQuickStats() {
+        const grid = document.getElementById('fhStatsGrid');
+        if (!grid || typeof FarmHubUtil === 'undefined') {
+            return;
+        }
+        const setStat = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+            }
+        };
+
+        setStat('statCrops', FarmHubUtil.loadJsonArray('farmhub_crops').length);
+        setStat('statAnimals', FarmHubUtil.loadJsonArray('farmhub_animals').length);
+        setStat('statEmployees', FarmHubUtil.loadJsonArray('farmhub_employees').length);
+
+        const balance = FarmHubUtil.loadJsonArray('farmhub_finances').reduce((sum, t) => {
+            const amount = parseFloat(t.transactionAmount) || 0;
+            if (t.transactionType === 'Income') {
+                return sum + amount;
+            }
+            if (t.transactionType === 'Expense') {
+                return sum - amount;
+            }
+            return sum;
+        }, 0);
+        setStat('statBalance', formatCurrency(balance));
+        const balanceEl = document.getElementById('statBalance');
+        if (balanceEl) {
+            balanceEl.classList.toggle('fh-stat-negative', balance < 0);
+        }
+    }
+
     function initEntrance() {
         const items = document.querySelectorAll('.fh-animate-in');
         if (prefersReducedMotion) {
@@ -325,6 +380,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        initGreeting();
+        initQuickStats();
         initEntrance();
         initRipple();
         initPins();
