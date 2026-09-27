@@ -152,6 +152,25 @@ body.dark-mode .bg-gray-50 {
     background-color: #1a202c;
 }
 
+body.dark-mode .bg-gray-100 {
+    background-color: #4a5568;
+}
+
+/* Plain <input>/<select>/<textarea> form fields that don't use the
+   .fh-input component class (the edit modals across every CRUD page,
+   plus the staff login select) have no background/text color classes
+   of their own, so without this they fall back to the browser's
+   default light control rendering -- a glaring white box floating in
+   an otherwise dark modal. Checkboxes/radios are left alone since a
+   dark fill looks wrong on their native check/dot rendering. */
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]),
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
 /* Shared form-field styling (currently used by the Crops page). One
    class instead of a long repeated Tailwind utility chain per input,
    and it's what makes dark-mode support and the date-picker icon fix
