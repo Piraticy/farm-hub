@@ -442,7 +442,7 @@
             };
 
             allCropsData.push(cropData);
-            allCropsData.sort((a, b) => a.cropName.localeCompare(b.cropName));
+            allCropsData.sort((a, b) => (a.cropName || '').localeCompare(b.cropName || ''));
             saveCrops(allCropsData);
             renderCropsTable(allCropsData);
             form.reset();
@@ -465,7 +465,7 @@
                     location: form.editCropLocation.value,
                     notes: form.editCropNotes.value
                 };
-                allCropsData.sort((a, b) => a.cropName.localeCompare(b.cropName));
+                allCropsData.sort((a, b) => (a.cropName || '').localeCompare(b.cropName || ''));
                 saveCrops(allCropsData);
                 renderCropsTable(allCropsData);
             }
