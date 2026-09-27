@@ -26,5 +26,14 @@ const FarmHubUtil = (function () {
         }
     }
 
-    return { escapeHtml, loadJsonArray };
+    // Every page's CSV export wraps each field in a literal `"..."` without
+    // escaping quote characters inside it -- a value like `24" hose pipe`
+    // closes the quoted field early, so anything after the embedded quote
+    // spills into the next column when opened in Excel/Sheets. Per RFC 4180,
+    // a literal quote inside a quoted field is escaped by doubling it.
+    function toCsvField(value) {
+        return `"${String(value ?? '').replace(/"/g, '""')}"`;
+    }
+
+    return { escapeHtml, loadJsonArray, toCsvField };
 })();

@@ -349,11 +349,11 @@
 
             const csvRows = data.map(animal => {
                 const row = [
-                    `"${animal.animalType || ''}"`,
-                    `"${animal.dateOfBirth || ''}"`,
-                    `"${animal.tagId || ''}"`,
-                    `"${animal.location || ''}"`,
-                    `"${animal.notes || ''}"`
+                    FarmHubUtil.toCsvField(animal.animalType),
+                    FarmHubUtil.toCsvField(animal.dateOfBirth),
+                    FarmHubUtil.toCsvField(animal.tagId),
+                    FarmHubUtil.toCsvField(animal.location),
+                    FarmHubUtil.toCsvField(animal.notes)
                 ].join(',');
                 return row;
             });
