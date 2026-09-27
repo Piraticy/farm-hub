@@ -441,12 +441,12 @@
 
             const csvRows = data.map(employee => {
                 const row = [
-                    `"${employee.name || ''}"`,
-                    `"${employee.position || ''}"`,
-                    `"${employee.hireDate || ''}"`,
-                    `"${employee.dateOfBirth || ''}"`,
-                    `"${employee.placeOfBirth || ''}"`,
-                    `"${employee.currentLivingLocation || ''}"`
+                    FarmHubUtil.toCsvField(employee.name),
+                    FarmHubUtil.toCsvField(employee.position),
+                    FarmHubUtil.toCsvField(employee.hireDate),
+                    FarmHubUtil.toCsvField(employee.dateOfBirth),
+                    FarmHubUtil.toCsvField(employee.placeOfBirth),
+                    FarmHubUtil.toCsvField(employee.currentLivingLocation)
                 ].join(',');
                 return row;
             });

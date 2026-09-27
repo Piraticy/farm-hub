@@ -331,12 +331,12 @@
 
             const csvRows = data.map((customer) => {
                 const row = [
-                    `"${customer.customerName || ''}"`,
-                    `"${customer.customerType || ''}"`,
-                    `"${customer.customerEmail || ''}"`,
-                    `"${customer.customerPhone || ''}"`,
-                    `"${customer.customerAddress || ''}"`,
-                    `"${customer.customerNotes || ''}"`
+                    FarmHubUtil.toCsvField(customer.customerName),
+                    FarmHubUtil.toCsvField(customer.customerType),
+                    FarmHubUtil.toCsvField(customer.customerEmail),
+                    FarmHubUtil.toCsvField(customer.customerPhone),
+                    FarmHubUtil.toCsvField(customer.customerAddress),
+                    FarmHubUtil.toCsvField(customer.customerNotes)
                 ].join(',');
                 return row;
             });

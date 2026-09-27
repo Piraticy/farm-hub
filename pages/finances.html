@@ -581,12 +581,12 @@
                 
                 const csvRows = data.map(item => {
                     const row = [
-                        `"${item.transactionType || ''}"`,
-                        `"${item.relatedSource || ''}"`,
-                        `"${item.relatedItem || ''}"`,
-                        `"${item.transactionDate || ''}"`,
-                        `"${item.transactionDescription || ''}"`,
-                        `"${parseFloat(item.transactionAmount).toFixed(2) || '0.00'}"`
+                        FarmHubUtil.toCsvField(item.transactionType),
+                        FarmHubUtil.toCsvField(item.relatedSource),
+                        FarmHubUtil.toCsvField(item.relatedItem),
+                        FarmHubUtil.toCsvField(item.transactionDate),
+                        FarmHubUtil.toCsvField(item.transactionDescription),
+                        FarmHubUtil.toCsvField(parseFloat(item.transactionAmount).toFixed(2) || '0.00')
                     ].join(',');
                     return row;
                 });

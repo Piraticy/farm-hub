@@ -330,10 +330,10 @@
             
             const csvRows = data.map(item => {
                 const row = [
-                    `"${item.itemName || ''}"`,
-                    `"${item.itemCategory || ''}"`,
-                    `"${item.itemQuantity || ''}"`,
-                    `"${item.itemNotes || ''}"`
+                    FarmHubUtil.toCsvField(item.itemName),
+                    FarmHubUtil.toCsvField(item.itemCategory),
+                    FarmHubUtil.toCsvField(item.itemQuantity),
+                    FarmHubUtil.toCsvField(item.itemNotes)
                 ].join(',');
                 return row;
             });

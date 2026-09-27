@@ -339,12 +339,12 @@
             
             const csvRows = data.map(crop => {
                 const row = [
-                    `"${crop.cropName || ''}"`,
-                    `"${crop.cropType || ''}"`,
-                    `"${crop.plantingDate || ''}"`,
-                    `"${crop.harvestDate || ''}"`,
-                    `"${crop.location || ''}"`,
-                    `"${crop.notes || ''}"`
+                    FarmHubUtil.toCsvField(crop.cropName),
+                    FarmHubUtil.toCsvField(crop.cropType),
+                    FarmHubUtil.toCsvField(crop.plantingDate),
+                    FarmHubUtil.toCsvField(crop.harvestDate),
+                    FarmHubUtil.toCsvField(crop.location),
+                    FarmHubUtil.toCsvField(crop.notes)
                 ].join(',');
                 return row;
             });
