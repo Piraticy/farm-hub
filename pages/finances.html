@@ -40,6 +40,7 @@
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
     <script src="assets/datepicker.js"></script>
+    <script src="assets/dom-utils.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('finances');</script>
 </head>
@@ -393,15 +394,15 @@
             });
 
             const STORAGE_KEY = 'farmhub_finances';
-            const loadTransactions = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const loadTransactions = () => FarmHubUtil.loadJsonArray(STORAGE_KEY);
             const saveTransactions = (transactions) => localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 
             let allTransactionsData = loadTransactions();
             // Related-item dropdowns read the other pages' local data, so a
             // transaction can be linked to a crop/animal/inventory item.
-            const cropsData = JSON.parse(localStorage.getItem('farmhub_crops') || '[]');
-            const animalsData = JSON.parse(localStorage.getItem('farmhub_animals') || '[]');
-            const inventoryData = JSON.parse(localStorage.getItem('farmhub_inventory') || '[]');
+            const cropsData = FarmHubUtil.loadJsonArray('farmhub_crops');
+            const animalsData = FarmHubUtil.loadJsonArray('farmhub_animals');
+            const inventoryData = FarmHubUtil.loadJsonArray('farmhub_inventory');
 
             // Function to (re)render the transactions table and summary from local data
             const refreshTransactions = () => {
@@ -424,7 +425,6 @@
 
             // Function to reset all form fields to a clean state
             const resetForm = () => {
-                console.log('Resetting form...');
                 addTransactionForm.reset();
                 incomeFieldsContainerEl.classList.add('hidden');
                 expenseFieldsContainerEl.classList.add('hidden');
@@ -435,8 +435,7 @@
             // Function to update the form fields based on transaction type
             const updateDynamicFields = () => {
                 const type = transactionTypeEl.value;
-                console.log(`Transaction type changed to: ${type}. Toggling visibility.`);
-                
+
                 // Explicitly show or hide the main containers
                 if (type === 'Income') {
                     incomeFieldsContainerEl.classList.remove('hidden');
@@ -444,19 +443,16 @@
                     if (transactionDescriptionEl) {
                          transactionDescriptionEl.value = 'Income from a successful sale.';
                     }
-                    console.log('Income fields are now visible.');
                 } else if (type === 'Expense') {
                     incomeFieldsContainerEl.classList.add('hidden');
                     expenseFieldsContainerEl.classList.remove('hidden');
                      if (transactionDescriptionEl) {
                         transactionDescriptionEl.value = 'Expense for farm supplies.';
                      }
-                    console.log('Expense fields are now visible.');
                 } else {
                     // Hide both if the "Select type..." option is chosen
                     incomeFieldsContainerEl.classList.add('hidden');
                     expenseFieldsContainerEl.classList.add('hidden');
-                    console.log('All dynamic fields are now hidden.');
                 }
 
                 // Also, reset related item dropdowns
@@ -472,7 +468,6 @@
 
             // Function to populate related item dropdowns
             const populateRelatedItems = (source, element, data) => {
-                console.log(`Populating related items for source: ${source}. Data length: ${data.length}`);
                 if (!element) return;
                 element.innerHTML = '<option value="" disabled selected>Select item...</option>';
                 if (data && data.length > 0) {
@@ -535,18 +530,18 @@
                         const amountSign = transaction.transactionType === 'Income' ? '+' : '-';
                         let relatedItemText = 'N/A';
                         if (transaction.relatedSource && transaction.relatedItem) {
-                            relatedItemText = `${transaction.relatedSource}: ${transaction.relatedItem}`;
+                            relatedItemText = `${FarmHubUtil.escapeHtml(transaction.relatedSource)}: ${FarmHubUtil.escapeHtml(transaction.relatedItem)}`;
                         } else if (transaction.relatedSource) {
-                            relatedItemText = transaction.relatedSource;
+                            relatedItemText = FarmHubUtil.escapeHtml(transaction.relatedSource);
                         }
 
                         const row = document.createElement('tr');
                         row.className = 'hover:bg-gray-100 transition-colors duration-150';
                         row.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${transaction.transactionType || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${FarmHubUtil.escapeHtml(transaction.transactionType || 'N/A')}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${relatedItemText}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.transactionDate || 'N/A'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.transactionDescription || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(transaction.transactionDate || 'N/A')}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(transaction.transactionDescription || 'N/A')}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${amountClass}">
                                 ${amountSign}${parseFloat(transaction.transactionAmount).toFixed(2) || '0.00'}
                             </td>
