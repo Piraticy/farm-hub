@@ -120,6 +120,10 @@
             return;
         }
         const wraps = Array.from(grid.querySelectorAll('.fh-card-wrap'));
+        // Below the sm breakpoint the cards lay out as a compact icon
+        // grid (theme.css) with the pin-action strip hidden -- too
+        // narrow for the swipe-to-reveal gesture to make sense of.
+        const swipeEnabled = window.matchMedia('(min-width: 640px)').matches;
 
         function applyOrder() {
             const pinned = loadPinned();
@@ -167,7 +171,9 @@
                 applyOrder();
             });
 
-            wireSwipe(wrap, card);
+            if (swipeEnabled) {
+                wireSwipe(wrap, card);
+            }
         });
 
         applyOrder();
