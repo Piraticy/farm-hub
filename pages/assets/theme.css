@@ -66,9 +66,13 @@ body {
    even arranged into a clean grid, it's most of a screen's height
    before any real page content shows. Below the sm breakpoint it's
    collapsed by default and only shown once #navToggleBtn (in the
-   header, next to the logout/theme icons) opens it; on tap it lays
-   out as a real 2-column grid, with the lone 7th item spanning both
-   columns rather than sitting off-center in a half-empty row.
+   header, next to the logout/theme icons) opens it. Rather than
+   dropping it into the normal document flow (which would still push
+   every dashboard card down a screen's height while open), it opens
+   as a floating dropdown positioned over the page content, so the
+   content underneath never has to move out of its way. On tap it
+   lays out as a real 2-column grid, with the lone 7th item spanning
+   both columns rather than sitting off-center in a half-empty row.
    !important on the `display` toggle here for the same reason as
    .fh-input et al.: `.fh-nav-tabs` and Tailwind's own `.flex` utility
    (also present on this element) tie in specificity, so whichever
@@ -77,6 +81,10 @@ body {
    deterministic instead of leaving the menu stuck open or unreachable
    depending on load timing. */
 @media (max-width: 639px) {
+    .fh-shell-nav {
+        position: relative;
+    }
+
     .fh-nav-tabs {
         display: none !important;
     }
@@ -84,6 +92,12 @@ body {
     .fh-nav-tabs.fh-nav-open {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr);
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        z-index: 40;
+        margin-bottom: 0;
     }
 
     .fh-nav-tabs.fh-nav-open > a {
