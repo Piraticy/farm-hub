@@ -110,6 +110,57 @@ body {
     }
 }
 
+/* The dashboard's 6 section cards, at full width with a description
+   line and a "Manage X ->" link each, are most of a phone screen's
+   height before scrolling even starts. Below the sm breakpoint, lay
+   them out as a compact 3-column icon grid instead -- like a phone's
+   home screen -- so every section is visible and reachable in one
+   glance, with the description and link (redundant once the whole
+   tile is already the tap target) hidden. The swipeable "pin to top"
+   gesture (dashboard-interactions.js) doesn't fit a tile this
+   narrow, so it's disabled at this width in JS and its action strip
+   hidden here to match. !important throughout for the same reason
+   as .fh-input et al.: these rules override Tailwind utility classes
+   (p-6, w-12/h-12, text-xl, mb-4/mb-1) present on the same elements,
+   and equal-specificity single-class selectors are decided by CDN
+   injection order, not source order. */
+@media (max-width: 639px) {
+    #fhCardGrid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .fh-card {
+        padding: 0.85rem 0.5rem !important;
+        align-items: center;
+        text-align: center;
+    }
+
+    .fh-card-icon {
+        width: 2.75rem !important;
+        height: 2.75rem !important;
+        margin: 0 auto 0.5rem !important;
+    }
+
+    .fh-card-icon svg {
+        width: 1.35rem !important;
+        height: 1.35rem !important;
+    }
+
+    .fh-card-title {
+        font-size: 0.78rem !important;
+        line-height: 1rem;
+        margin-bottom: 0 !important;
+    }
+
+    .fh-card-desc,
+    .fh-card-cta,
+    .fh-pin-action,
+    .fh-pin-star {
+        display: none !important;
+    }
+}
+
 #themeToggle,
 #installBtn,
 #logoutBtn {
