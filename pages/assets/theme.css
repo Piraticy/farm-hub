@@ -146,6 +146,14 @@ body.dark-mode .hover\:bg-gray-100:hover {
     background-color: #4a5568;
 }
 
+/* Unstyled .text-gray-500 (used for most secondary table-cell text across
+   every CRUD page) only hits ~2.5:1 contrast against the dark card
+   background, failing WCAG AA's 4.5:1 minimum -- gray-400's own shade
+   clears it comfortably. */
+body.dark-mode .text-gray-500 {
+    color: #9ca3af;
+}
+
 body.dark-mode .text-gray-600 {
     color: #a0aec0;
 }
