@@ -62,6 +62,29 @@ body {
     font-weight: 600;
 }
 
+/* The nav pill's 7 links are `flex flex-wrap justify-center` on every
+   page, which reads fine on desktop (one row) but on a narrow phone
+   wraps into an uneven, loosely-centered pile -- each row's items
+   have different widths, so nothing lines up into columns. Below the
+   sm breakpoint, lay it out as a real 2-column grid instead so every
+   link gets an even, aligned cell; the lone 7th item spans both
+   columns rather than sitting off-center in a half-empty row. */
+@media (max-width: 639px) {
+    .fh-nav-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fh-nav-tabs > a {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .fh-nav-tabs > a:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+}
+
 #themeToggle,
 #installBtn,
 #logoutBtn {
