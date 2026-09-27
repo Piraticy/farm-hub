@@ -33,6 +33,15 @@ body {
     flex-shrink: 0;
 }
 
+/* Needs its own stacking context, above the mobile nav backdrop's
+   z-index: 35 (see .fh-nav-backdrop below) -- otherwise that fixed,
+   full-viewport dimmer would sit on top of the header too and take
+   over clicks meant for the toggle/logout/theme buttons in it. */
+.fh-shell-header {
+    position: relative;
+    z-index: 45;
+}
+
 .fh-shell-content {
     flex: 1 1 auto;
     min-height: 0;
@@ -60,6 +69,14 @@ body {
     color: #047857;
     background-color: #d1fae5;
     font-weight: 600;
+}
+
+/* Hidden at every width by default; only the mobile media query below
+   ever shows it, and only while the nav is open. Without this base
+   rule the plain, otherwise-unstyled div would fall back to the
+   browser's default block display outside that query. */
+.fh-nav-backdrop {
+    display: none;
 }
 
 /* The nav pill's 7 links take up a lot of vertical space on a phone --
@@ -107,6 +124,19 @@ body {
 
     .fh-nav-tabs.fh-nav-open > a:last-child:nth-child(odd) {
         grid-column: 1 / -1;
+    }
+
+    /* A floating dropdown with page content visible right behind it
+       reads as broken, not intentional -- a proper dimmed backdrop
+       (covering the full viewport, tapping it closes the menu same
+       as any other outside click) is what makes it read as a real
+       overlay instead of a card oddly stacked on top of the page. */
+    .fh-nav-backdrop.fh-nav-open {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        z-index: 35;
     }
 }
 
@@ -602,6 +632,31 @@ body.dark-mode .fh-blob-b {
 .fh-animate-in.fh-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Dashboard-only "at a glance" row (dashboard-interactions.js fills in
+   the counts and net balance from each section's own localStorage
+   data). 2-up on a phone, a full row from sm: up -- same breakpoint
+   as the section-card grid below it. */
+.fh-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+    .fh-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.fh-stat-balance.fh-stat-negative {
+    color: #dc2626;
+}
+
+body.dark-mode .fh-stat-balance.fh-stat-negative {
+    color: #f87171;
 }
 
 .fh-card {

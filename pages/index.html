@@ -30,6 +30,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
+    <script defer src="assets/dom-utils.js"></script>
     <script defer src="assets/dashboard-interactions.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage(null);</script>
@@ -81,6 +82,8 @@
     <!-- Main Content Area -->
     <div class="container mx-auto px-4 pt-4 fh-shell-nav">
 
+        <div id="fhNavBackdrop" class="fh-nav-backdrop" aria-hidden="true"></div>
+
         <!-- Dashboard Navigation Tabs -->
         <div id="fhNavTabs" class="fh-nav-tabs fh-animate-in bg-white rounded-2xl shadow-lg p-2 mb-8 flex flex-wrap justify-center gap-2">
             <a href="index.html" class="flex items-center space-x-2 py-2 px-4 rounded-xl transition-colors duration-200 tab-active">
@@ -115,6 +118,44 @@
     </div>
 
     <main class="container mx-auto px-4 pb-8 fh-shell-content">
+
+        <!-- Greeting -->
+        <div class="fh-animate-in mb-6">
+            <h2 class="text-2xl font-bold text-gray-800" id="fhGreeting">Welcome back</h2>
+            <p class="text-gray-500 text-sm mt-1" id="fhTodayDate"></p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="fh-stats-grid fh-animate-in" id="fhStatsGrid">
+            <div class="fh-stat-card bg-white rounded-2xl shadow-lg p-4">
+                <div class="w-10 h-10 rounded-xl bg-lime-100 text-lime-700 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2z"></path></svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-800" id="statCrops">0</div>
+                <div class="text-gray-500 text-xs mt-0.5">Crops</div>
+            </div>
+            <div class="fh-stat-card bg-white rounded-2xl shadow-lg p-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 9a3 3 0 11-6 0 3 3 0 016 0zM14 17a3 3 0 11-6 0 3 3 0 016 0zM11 14a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-800" id="statAnimals">0</div>
+                <div class="text-gray-500 text-xs mt-0.5">Animals</div>
+            </div>
+            <div class="fh-stat-card bg-white rounded-2xl shadow-lg p-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM2 17a3 3 0 116 0 3 3 0 01-6 0zM16 17a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-800" id="statEmployees">0</div>
+                <div class="text-gray-500 text-xs mt-0.5">Team</div>
+            </div>
+            <div class="fh-stat-card bg-white rounded-2xl shadow-lg p-4">
+                <div class="w-10 h-10 rounded-xl bg-green-100 text-green-700 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v.25h-.25a1.75 1.75 0 000 3.5h1.5a.25.25 0 010 .5h-2a.75.75 0 000 1.5h.75v.25a.75.75 0 001.5 0v-.25h.25a1.75 1.75 0 000-3.5h-1.5a.25.25 0 010-.5h2a.75.75 0 000-1.5h-.75v-.25z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="text-2xl font-bold text-gray-800 fh-stat-balance" id="statBalance">$0</div>
+                <div class="text-gray-500 text-xs mt-0.5">Net Balance</div>
+            </div>
+        </div>
 
         <!-- Section Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="fhCardGrid">

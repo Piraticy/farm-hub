@@ -1,8 +1,9 @@
 // Shared FarmHub header behavior: the dark-mode toggle (persisted in
 // localStorage, applied on every page with a #themeToggle button and
 // #moon-icon/#sun-icon children) and the mobile nav menu toggle (every
-// page's #navToggleBtn / #fhNavTabs pair -- collapsed by default below
-// the sm breakpoint per theme.css, expanded by adding .fh-nav-open).
+// page's #navToggleBtn / #fhNavTabs pair, plus a #fhNavBackdrop dimmer
+// behind it -- collapsed by default below the sm breakpoint per
+// theme.css, expanded by adding .fh-nav-open to both).
 (function () {
     function applyTheme(theme) {
         document.body.classList.toggle('dark-mode', theme === 'dark');
@@ -30,12 +31,16 @@
     function initNavToggle() {
         var btn = document.getElementById('navToggleBtn');
         var nav = document.getElementById('fhNavTabs');
+        var backdrop = document.getElementById('fhNavBackdrop');
         if (!btn || !nav) {
             return;
         }
 
         function setOpen(open) {
             nav.classList.toggle('fh-nav-open', open);
+            if (backdrop) {
+                backdrop.classList.toggle('fh-nav-open', open);
+            }
             btn.setAttribute('aria-expanded', String(open));
         }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'farmhub-v6';
+const CACHE_NAME = 'farmhub-v7';
 const PRECACHE_URLS = [
     'index.html',
     'login.html',
