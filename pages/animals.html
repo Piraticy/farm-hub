@@ -40,6 +40,7 @@
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
     <script src="assets/datepicker.js"></script>
+    <script src="assets/dom-utils.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('animals');</script>
 </head>
@@ -269,7 +270,7 @@
     <!-- Data is stored locally in this browser (localStorage) -->
     <script>
         const STORAGE_KEY = 'farmhub_animals';
-        const loadAnimals = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const loadAnimals = () => FarmHubUtil.loadJsonArray(STORAGE_KEY);
         const saveAnimals = (animals) => localStorage.setItem(STORAGE_KEY, JSON.stringify(animals));
 
         FarmHubDatePicker.init('[data-datepicker]');
@@ -306,11 +307,11 @@
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-100 transition-colors duration-150';
                     row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${animal.animalType || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${animal.dateOfBirth || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${animal.tagId || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${animal.location || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${animal.notes || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${FarmHubUtil.escapeHtml(animal.animalType || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(animal.dateOfBirth || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(animal.tagId || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(animal.location || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(animal.notes || 'N/A')}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
                             <button class="edit-btn text-blue-600 hover:text-blue-900 transition-colors duration-200" data-id="${animal.id}">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-7.293 7.293a1 1 0 01-.707.293H7.5a1 1 0 01-1-1v-1.586a1 1 0 01.293-.707l7.293-7.293zM15 11l-4.5 4.5V17h1.5l4.5-4.5V11zM10 13a1 1 0 100-2 1 1 0 000 2z"/></svg>

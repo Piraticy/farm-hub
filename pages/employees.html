@@ -108,6 +108,7 @@
     <meta name="apple-mobile-web-app-title" content="FarmHub">
     <script defer src="assets/pwa.js"></script>
     <script src="assets/datepicker.js"></script>
+    <script src="assets/dom-utils.js"></script>
     <script src="assets/auth.js"></script>
     <script>FarmHubAuth.guardPage('employees');</script>
 </head>
@@ -342,7 +343,7 @@
     <!-- Data is stored locally in this browser (localStorage) -->
     <script>
         const STORAGE_KEY = 'farmhub_employees';
-        const loadEmployees = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const loadEmployees = () => FarmHubUtil.loadJsonArray(STORAGE_KEY);
         const saveEmployees = (employees) => localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
 
         FarmHubDatePicker.init('[data-datepicker]');
@@ -404,12 +405,12 @@
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-100 transition-colors duration-150';
                     row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${employee.name || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.position || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.hireDate || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.dateOfBirth || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.placeOfBirth || 'N/A'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.currentLivingLocation || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${FarmHubUtil.escapeHtml(employee.name || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(employee.position || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(employee.hireDate || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(employee.dateOfBirth || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(employee.placeOfBirth || 'N/A')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(employee.currentLivingLocation || 'N/A')}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
                             <button class="edit-btn text-blue-600 hover:text-blue-900 transition-colors duration-200" data-id="${employee.id}">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.586 3.586a2 2 0 112.828 2.828l-7.293 7.293a1 1 0 01-.707.293H7.5a1 1 0 01-1-1v-1.586a1 1 0 01.293-.707l7.293-7.293zM15 11l-4.5 4.5V17h1.5l4.5-4.5V11zM10 13a1 1 0 100-2 1 1 0 000 2z"/></svg>
@@ -609,7 +610,7 @@
                 const row = document.createElement('div');
                 row.className = 'border border-gray-200 rounded-xl p-4';
                 row.innerHTML = `
-                    <p class="font-medium text-gray-800 mb-2">${employee.name || 'Unnamed'}</p>
+                    <p class="font-medium text-gray-800 mb-2">${FarmHubUtil.escapeHtml(employee.name || 'Unnamed')}</p>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${checkboxes}</div>
                 `;
                 staffAccessList.appendChild(row);

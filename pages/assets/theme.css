@@ -120,6 +120,18 @@ body.dark-mode .text-gray-700 {
     color: #e2e8f0;
 }
 
+/* The "Cancel" button in every edit/delete modal pairs .text-gray-700 (which
+   the rule above turns light in dark mode) with .bg-gray-200 -- without a
+   dark override here that stays its light-mode near-white shade, so the
+   button reads as near-invisible light-on-light text. */
+body.dark-mode .bg-gray-200 {
+    background-color: #4a5568;
+}
+
+body.dark-mode .hover\:bg-gray-300:hover {
+    background-color: #5a6578;
+}
+
 body.dark-mode .text-green-600 {
     color: #68d391;
 }

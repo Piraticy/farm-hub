@@ -1,4 +1,4 @@
-const CACHE_NAME = 'farmhub-v3';
+const CACHE_NAME = 'farmhub-v4';
 const PRECACHE_URLS = [
     'index.html',
     'login.html',
@@ -16,9 +16,12 @@ const PRECACHE_URLS = [
     'assets/auth.js',
     'assets/weather.js',
     'assets/pwa.js',
+    'assets/dom-utils.js',
+    'assets/datepicker.js',
     'assets/dashboard-interactions.js',
     'icons/icon-192.png',
-    'icons/icon-512.png'
+    'icons/icon-512.png',
+    'icons/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
