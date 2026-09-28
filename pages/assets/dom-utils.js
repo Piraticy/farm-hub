@@ -35,5 +35,26 @@ const FarmHubUtil = (function () {
         return `"${String(value ?? '').replace(/"/g, '""')}"`;
     }
 
-    return { escapeHtml, loadJsonArray, toCsvField };
+    // Every CRUD page's edit/delete modal (#editModal / #deleteModal) only
+    // closed via its own Cancel/X button -- clicking the dimmed backdrop
+    // around the card, or pressing Escape, did nothing, unlike every other
+    // dismissible overlay in the app (the mobile nav dropdown supports
+    // both). `cancelBtn` is whichever button the page already wires to
+    // close this modal, so this reuses its exact existing side effects
+    // (e.g. crops.html resetting docIdToDelete) instead of duplicating
+    // them here.
+    function wireModalDismiss(modal, cancelBtn) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cancelBtn.click();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('invisible')) {
+                cancelBtn.click();
+            }
+        });
+    }
+
+    return { escapeHtml, loadJsonArray, toCsvField, wireModalDismiss };
 })();

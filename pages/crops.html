@@ -285,6 +285,10 @@
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
+        // Backdrop click and Escape both dismiss these modals, matching the mobile nav dropdown.
+        FarmHubUtil.wireModalDismiss(editModal, closeEditModalBtn);
+        FarmHubUtil.wireModalDismiss(deleteModal, cancelDeleteBtn);
+
         FarmHubDatePicker.init('[data-datepicker]');
 
         let allCropsData = loadCrops();
