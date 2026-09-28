@@ -550,7 +550,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(transaction.transactionDate || 'N/A')}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${FarmHubUtil.escapeHtml(transaction.transactionDescription || 'N/A')}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${amountClass}">
-                                ${amountSign}${parseFloat(transaction.transactionAmount).toFixed(2) || '0.00'}
+                                ${amountSign}$${formatAmount(parseFloat(transaction.transactionAmount) || 0)}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2 justify-end">
                                 <button class="edit-btn text-blue-600 hover:text-blue-900 transition-colors duration-200" data-id="${transaction.id}">
@@ -567,12 +567,13 @@
             };
 
             // Function to update the summary cards
+            const formatAmount = (n) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const updateSummary = (income, expenses) => {
                 const net = income - expenses;
-                if (totalIncomeEl) totalIncomeEl.textContent = `$${income.toFixed(2)}`;
-                if (totalExpensesEl) totalExpensesEl.textContent = `$${expenses.toFixed(2)}`;
+                if (totalIncomeEl) totalIncomeEl.textContent = `$${formatAmount(income)}`;
+                if (totalExpensesEl) totalExpensesEl.textContent = `$${formatAmount(expenses)}`;
                 if (netBalanceEl) {
-                    netBalanceEl.textContent = `$${net.toFixed(2)}`;
+                    netBalanceEl.textContent = `$${formatAmount(net)}`;
                     netBalanceEl.className = `mt-1 text-3xl font-semibold ${net >= 0 ? 'text-green-600' : 'text-red-600'}`;
                 }
             };
@@ -593,7 +594,7 @@
                         FarmHubUtil.toCsvField(item.relatedItem),
                         FarmHubUtil.toCsvField(item.transactionDate),
                         FarmHubUtil.toCsvField(item.transactionDescription),
-                        FarmHubUtil.toCsvField(parseFloat(item.transactionAmount).toFixed(2) || '0.00')
+                        FarmHubUtil.toCsvField((parseFloat(item.transactionAmount) || 0).toFixed(2))
                     ].join(',');
                     return row;
                 });
