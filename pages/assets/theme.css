@@ -140,6 +140,75 @@ body {
     }
 }
 
+/* Every CRUD table (Crops, Animals, Employees, Customers, Finances,
+   Inventory) has 5-7 columns, some with long headers ("Expected
+   Harvest Date", "Living Location"). On a phone that's either a
+   forced sideways scroll or, worse, a table with no data rows yet to
+   force its width (nothing else pins the columns open) where the
+   browser just wraps a header down to one character per line. Below
+   the sm breakpoint, turn the table into a stacked list instead: each
+   row becomes a block of label/value pairs (the label taken from the
+   td's own data-label, set alongside its column in each page's
+   render function) with the header row hidden, since it no longer
+   describes anything. */
+@media (max-width: 639px) {
+    .fh-responsive-table thead {
+        display: none;
+    }
+
+    .fh-responsive-table,
+    .fh-responsive-table tbody,
+    .fh-responsive-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .fh-responsive-table tr {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .fh-responsive-table tr:last-child {
+        border-bottom: none;
+    }
+
+    .fh-responsive-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.3rem 0;
+        border: none;
+        white-space: normal;
+        text-align: right;
+    }
+
+    .fh-responsive-table td[data-label]::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #6b7280;
+        text-align: left;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+    }
+
+    .fh-responsive-table td:last-child {
+        justify-content: flex-end;
+        padding-top: 0.5rem;
+    }
+
+    body.dark-mode .fh-responsive-table tr {
+        border-bottom-color: #4a5568;
+    }
+
+    body.dark-mode .fh-responsive-table td[data-label]::before {
+        color: #9ca3af;
+    }
+}
+
 /* The dashboard's 6 section cards, at full width with a description
    line and a "Manage X ->" link each, are most of a phone screen's
    height before scrolling even starts. Below the sm breakpoint, lay
