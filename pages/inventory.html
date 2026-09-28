@@ -267,6 +267,10 @@
         const deleteModal = document.getElementById('deleteModal');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        // Backdrop click and Escape both dismiss these modals, matching the mobile nav dropdown.
+        FarmHubUtil.wireModalDismiss(editModal, closeEditModalBtn);
+        FarmHubUtil.wireModalDismiss(deleteModal, cancelDeleteBtn);
         let itemIdToDelete = null;
 
         const showModal = (modalElement) => {
