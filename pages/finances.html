@@ -446,6 +446,8 @@
             }
 
             // Function to update the form fields based on transaction type
+            const INCOME_DEFAULT_DESCRIPTION = 'Income from a successful sale.';
+            const EXPENSE_DEFAULT_DESCRIPTION = 'Expense for farm supplies.';
             const updateDynamicFields = () => {
                 const type = transactionTypeEl.value;
 
@@ -453,14 +455,18 @@
                 if (type === 'Income') {
                     incomeFieldsContainerEl.classList.remove('hidden');
                     expenseFieldsContainerEl.classList.add('hidden');
-                    if (transactionDescriptionEl) {
-                         transactionDescriptionEl.value = 'Income from a successful sale.';
+                    // Only fill in the convenience default while the field is
+                    // still empty or still holds the *other* type's default --
+                    // once the person has typed their own description,
+                    // switching the type chip must never overwrite it.
+                    if (transactionDescriptionEl && (!transactionDescriptionEl.value || transactionDescriptionEl.value === EXPENSE_DEFAULT_DESCRIPTION)) {
+                         transactionDescriptionEl.value = INCOME_DEFAULT_DESCRIPTION;
                     }
                 } else if (type === 'Expense') {
                     incomeFieldsContainerEl.classList.add('hidden');
                     expenseFieldsContainerEl.classList.remove('hidden');
-                     if (transactionDescriptionEl) {
-                        transactionDescriptionEl.value = 'Expense for farm supplies.';
+                     if (transactionDescriptionEl && (!transactionDescriptionEl.value || transactionDescriptionEl.value === INCOME_DEFAULT_DESCRIPTION)) {
+                        transactionDescriptionEl.value = EXPENSE_DEFAULT_DESCRIPTION;
                      }
                 } else {
                     // Hide both if the "Select type..." option is chosen
