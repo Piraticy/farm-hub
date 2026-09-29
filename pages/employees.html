@@ -378,7 +378,7 @@
             hireDateError.classList.add('hidden');
         });
         const employeesTableBody = document.getElementById('employeesTableBody');
-        FarmHubUtil.wireSwipeToDeleteRows(employeesTableBody);
+        FarmHubUtil.wireSwipeRowActions(employeesTableBody);
         const loadingMessage = document.getElementById('loadingMessage');
         const noEmployeesMessage = document.getElementById('noEmployeesMessage');
         const downloadBtn = document.getElementById('downloadBtn');

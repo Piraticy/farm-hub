@@ -116,24 +116,37 @@ const FarmHubUtil = (function () {
 
     // Mirrors the dashboard's existing swipe-to-pin gesture (same
     // axis-lock/threshold/offset mechanics) but for the mobile stacked-
-    // list row layout: swipe a row left to reveal a "Delete" action
-    // behind it, which triggers the row's own existing .delete-btn (so
-    // it goes through the same confirmation modal, not an instant
-    // delete). Desktop keeps the plain table with its always-visible
-    // trash icon -- this only wires up below the sm breakpoint, where
-    // .fh-responsive-table turns each row into a swipeable block.
-    function wireSwipeToDeleteRows(tbody) {
+    // list row layout, and adds two more row gestures on top of it:
+    //   - swipe left reveals both a blue "Edit" and a red "Delete"
+    //     action side by side behind the row (a single direction, not
+    //     mirrored to swipe-right: each row's data-label/value pair is
+    //     a space-between flex row, value flush to the right edge --
+    //     shifting content that only ever REVEALS more room to its own
+    //     right, i.e. left, keeps the value on-screen the whole time;
+    //     shifting it the other way pushes that same value straight
+    //     past the row's clipped right edge into nothing).
+    //   - a long-press (no swipe) on the row jumps straight to Edit
+    // Both trigger the row's own existing .delete-btn/.edit-btn (so
+    // they go through the exact same confirmation modal / edit form as
+    // the always-visible icons, never a shortcut around them). Desktop
+    // keeps the plain table with its always-visible icons -- this only
+    // wires up below the sm breakpoint, where .fh-responsive-table turns
+    // each row into a swipeable block.
+    function wireSwipeRowActions(tbody) {
         if (!tbody || !window.matchMedia('(max-width: 639px)').matches) {
             return;
         }
 
-        const OPEN_OFFSET = -84;
+        const OPEN_OFFSET = -168;
+        const LONG_PRESS_MS = 550;
         let activeRow = null;
         let startX = 0;
         let startY = 0;
         let baseX = 0;
         let axisLocked = null;
         let dragged = false;
+        let longPressTimer = null;
+        let longPressFired = false;
 
         // The row's own td's start as direct children of <tr> (needed for
         // the plain desktop table markup); wrapping them the first time a
@@ -150,30 +163,47 @@ const FarmHubUtil = (function () {
             while (tr.firstChild) {
                 content.appendChild(tr.firstChild);
             }
-            const action = document.createElement('button');
-            action.type = 'button';
-            action.className = 'fh-swipe-action';
-            action.textContent = 'Delete';
-            action.tabIndex = -1;
-            action.setAttribute('aria-label', 'Delete');
-            tr.appendChild(action);
+            const editAction = document.createElement('button');
+            editAction.type = 'button';
+            editAction.className = 'fh-swipe-action fh-swipe-action-edit';
+            editAction.textContent = 'Edit';
+            editAction.tabIndex = -1;
+            editAction.setAttribute('aria-label', 'Edit');
+
+            const deleteAction = document.createElement('button');
+            deleteAction.type = 'button';
+            deleteAction.className = 'fh-swipe-action fh-swipe-action-delete';
+            deleteAction.textContent = 'Delete';
+            deleteAction.tabIndex = -1;
+            deleteAction.setAttribute('aria-label', 'Delete');
+
+            tr.appendChild(editAction);
+            tr.appendChild(deleteAction);
             tr.appendChild(content);
             return content;
         }
 
-        function isOpen(tr) {
+        function isOpenRow(tr) {
             return tr.classList.contains('fh-swiped-open');
+        }
+
+        function currentOffset(tr) {
+            return isOpenRow(tr) ? OPEN_OFFSET : 0;
         }
 
         function closeRow(tr) {
             const content = tr.querySelector(':scope > .fh-row-content');
-            const action = tr.querySelector(':scope > .fh-swipe-action');
+            const editAction = tr.querySelector(':scope > .fh-swipe-action-edit');
+            const deleteAction = tr.querySelector(':scope > .fh-swipe-action-delete');
             tr.classList.remove('fh-swiped-open');
             if (content) {
                 content.style.transform = '';
             }
-            if (action) {
-                action.tabIndex = -1;
+            if (editAction) {
+                editAction.tabIndex = -1;
+            }
+            if (deleteAction) {
+                deleteAction.tabIndex = -1;
             }
         }
 
@@ -185,21 +215,46 @@ const FarmHubUtil = (function () {
             });
         }
 
+        function clearLongPress() {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        }
+
         tbody.addEventListener('touchstart', (e) => {
             const tr = e.target.closest('tr');
-            if (!tr || e.target.closest('.fh-swipe-action')) {
+            const onOwnActions = e.target.closest('.fh-swipe-action, .edit-btn, .delete-btn');
+            if (!tr || onOwnActions) {
                 activeRow = null;
+                clearLongPress();
                 return;
             }
             const t = e.touches[0];
             startX = t.clientX;
             startY = t.clientY;
             activeRow = tr;
-            baseX = isOpen(tr) ? OPEN_OFFSET : 0;
+            baseX = currentOffset(tr);
             axisLocked = null;
             dragged = false;
-            const content = ensureWrapped(tr);
-            content.style.transition = 'none';
+            longPressFired = false;
+            ensureWrapped(tr).style.transition = 'none';
+
+            clearLongPress();
+            // Only offer the long-press shortcut on a row that isn't
+            // already swiped open, so a press-and-hold on an open row's
+            // revealed action doesn't compete with tapping that action.
+            if (!isOpenRow(tr)) {
+                longPressTimer = setTimeout(() => {
+                    longPressFired = true;
+                    activeRow = null;
+                    navigator.vibrate?.(15);
+                    const realEditBtn = tr.querySelector('.edit-btn');
+                    if (realEditBtn) {
+                        realEditBtn.click();
+                    }
+                }, LONG_PRESS_MS);
+            }
         }, { passive: true });
 
         tbody.addEventListener('touchmove', (e) => {
@@ -214,6 +269,7 @@ const FarmHubUtil = (function () {
                 if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
                     return;
                 }
+                clearLongPress();
                 axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
                 if (axisLocked === 'x') {
                     closeAllExcept(activeRow);
@@ -231,6 +287,7 @@ const FarmHubUtil = (function () {
         }, { passive: false });
 
         tbody.addEventListener('touchend', () => {
+            clearLongPress();
             if (!activeRow) {
                 return;
             }
@@ -247,9 +304,13 @@ const FarmHubUtil = (function () {
                     if (content) {
                         content.style.transform = `translateX(${OPEN_OFFSET}px)`;
                     }
-                    const action = tr.querySelector(':scope > .fh-swipe-action');
-                    if (action) {
-                        action.tabIndex = 0;
+                    const editAction = tr.querySelector(':scope > .fh-swipe-action-edit');
+                    const deleteAction = tr.querySelector(':scope > .fh-swipe-action-delete');
+                    if (editAction) {
+                        editAction.tabIndex = 0;
+                    }
+                    if (deleteAction) {
+                        deleteAction.tabIndex = 0;
                     }
                 } else {
                     closeRow(tr);
@@ -259,12 +320,31 @@ const FarmHubUtil = (function () {
             axisLocked = null;
         });
 
+        tbody.addEventListener('touchcancel', () => {
+            clearLongPress();
+            if (activeRow) {
+                const content = activeRow.querySelector(':scope > .fh-row-content');
+                if (content) {
+                    content.style.transition = '';
+                }
+                closeRow(activeRow);
+            }
+            activeRow = null;
+            axisLocked = null;
+        });
+
         tbody.addEventListener('click', (e) => {
+            if (longPressFired) {
+                e.preventDefault();
+                e.stopPropagation();
+                longPressFired = false;
+                return;
+            }
             const tr = e.target.closest('tr');
             if (!tr) {
                 return;
             }
-            if (e.target.closest('.fh-swipe-action')) {
+            if (e.target.closest('.fh-swipe-action-delete')) {
                 e.preventDefault();
                 e.stopPropagation();
                 closeRow(tr);
@@ -274,7 +354,17 @@ const FarmHubUtil = (function () {
                 }
                 return;
             }
-            if (isOpen(tr)) {
+            if (e.target.closest('.fh-swipe-action-edit')) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeRow(tr);
+                const realEditBtn = tr.querySelector('.edit-btn');
+                if (realEditBtn) {
+                    realEditBtn.click();
+                }
+                return;
+            }
+            if (isOpenRow(tr)) {
                 if (dragged) {
                     e.preventDefault();
                     dragged = false;
@@ -285,5 +375,5 @@ const FarmHubUtil = (function () {
         });
     }
 
-    return { escapeHtml, loadJsonArray, toCsvField, wireModalDismiss, wireSwipeToDeleteRows };
+    return { escapeHtml, loadJsonArray, toCsvField, wireModalDismiss, wireSwipeRowActions };
 })();
