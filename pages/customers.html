@@ -376,6 +376,7 @@
         addCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
+            form.customerName.value = form.customerName.value.trim();
 
             if (!customerTypeHidden.value) {
                 customerTypeError.classList.remove('hidden');
@@ -413,6 +414,11 @@
         editCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const form = e.target;
+            form.editCustomerName.value = form.editCustomerName.value.trim();
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
             const docId = form.editCustomerId.value;
             const idx = allCustomersData.findIndex((c) => c.id === docId);
 

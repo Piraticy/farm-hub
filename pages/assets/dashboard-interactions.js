@@ -104,6 +104,22 @@
             axisLocked = null;
         });
 
+        // Without this, an interrupted gesture (an incoming call, the
+        // browser's own back-swipe stealing the touch, ...) leaves
+        // `dragging` stuck true and the transition disabled forever --
+        // touchend is the only place that resets either, and it never
+        // fires once the browser has cancelled the touch.
+        card.addEventListener('touchcancel', () => {
+            if (!dragging) {
+                return;
+            }
+            dragging = false;
+            axisLocked = null;
+            card.dataset.dragged = 'false';
+            card.style.transition = '';
+            card.style.transform = isOpen() ? `translateX(${OPEN_OFFSET}px)` : '';
+        });
+
         card.addEventListener('click', (e) => {
             if (card.dataset.dragged === 'true' || isOpen()) {
                 e.preventDefault();
@@ -377,6 +393,13 @@
                 indicator.style.transform = 'translateY(-100%) translateX(-50%)';
             }
         }, { passive: true });
+
+        window.addEventListener('touchcancel', () => {
+            pulling = false;
+            verticalPull = false;
+            indicator.style.opacity = '0';
+            indicator.style.transform = 'translateY(-100%) translateX(-50%)';
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {

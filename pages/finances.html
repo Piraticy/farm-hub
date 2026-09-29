@@ -285,7 +285,7 @@
                 </div>
                 <div>
                     <label for="editTransactionDate" class="block text-sm font-medium text-gray-700">Date</label>
-                    <input type="date" id="editTransactionDate" name="transactionDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                    <input type="date" id="editTransactionDate" name="transactionDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
                 </div>
                 <div>
                     <label for="editTransactionAmount" class="block text-sm font-medium text-gray-700">Amount ($)</label>
@@ -630,6 +630,7 @@
                 addTransactionForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     const form = e.target;
+                    form.transactionDescription.value = form.transactionDescription.value.trim();
 
                     let valid = true;
                     if (!transactionTypeEl.value) {
@@ -722,6 +723,11 @@
             editTransactionForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const form = e.target;
+                form.editTransactionDescription.value = form.editTransactionDescription.value.trim();
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
                 const docId = form.editTransactionId.value;
                 const idx = allTransactionsData.findIndex((t) => t.id === docId);
 
