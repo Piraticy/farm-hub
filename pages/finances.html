@@ -320,6 +320,7 @@
         {
             const addTransactionForm = document.getElementById('addTransactionForm');
             const transactionsTableBody = document.getElementById('transactionsTableBody');
+            FarmHubUtil.wireSwipeRowActions(transactionsTableBody);
             const totalIncomeEl = document.getElementById('totalIncome');
             const totalExpensesEl = document.getElementById('totalExpenses');
             const netBalanceEl = document.getElementById('netBalance');
