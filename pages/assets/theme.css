@@ -728,6 +728,41 @@ body.dark-mode .fh-stat-balance.fh-stat-negative {
     color: #f87171;
 }
 
+/* Every icon badge (the colored rounded square behind a section/stat
+   icon) was a completely flat tint -- one solid color, no depth.
+   A soft top-left sheen plus a subtle drop shadow (tinted dark, not
+   black, so it still reads as "this badge's shadow" rather than a
+   generic gray smudge) gives it some dimension without touching the
+   badge's own bg-*/text-* color classes, which still carry the
+   per-feature identity (lime for Crops, amber for Animals, ...). */
+.fh-icon-badge {
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fh-icon-badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%);
+    pointer-events: none;
+}
+
+.fh-card:hover .fh-icon-badge {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+body.dark-mode .fh-icon-badge {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .fh-icon-badge::after {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 60%);
+}
+
 .fh-card {
     position: relative;
     transition: transform 0.25s ease, box-shadow 0.2s ease;
