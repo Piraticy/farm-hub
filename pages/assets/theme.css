@@ -563,9 +563,13 @@ body.dark-mode .fh-chip.is-selected {
    fixed positioning (top/left/bottom set inline in viewport
    coordinates) so it escapes the app-shell's scrollable content area,
    which would otherwise clip it via overflow: auto whenever it needs
-   to open upward or spill past the container's edge. */
+   to open upward or spill past the container's edge. z-index above
+   the modal's z-50 -- every "Add New X" form now opens inside a modal,
+   so its date trigger's popover has to render (and stay clickable)
+   above that modal's own backdrop, not behind it. */
 .fh-calendar-popover.fh-cal-portal {
     position: fixed;
+    z-index: 60;
 }
 
 .fh-cal-header {
@@ -988,5 +992,48 @@ body.dark-mode .fh-pin-action {
     .fh-card,
     .fh-card svg {
         transition: none;
+    }
+}
+
+/* Glassmorphism: a frosted, translucent surface (blurred backdrop +
+   a thin light border) instead of a flat bg-white/bg-gray-* fill, on
+   the app's floating/overlay surfaces (every edit/delete/add modal
+   card, via .fh-glass) and on the cards that sit over the dashboard's
+   decorative blobs or a CRUD page's plain background (.fh-stat-card,
+   .fh-card, and each CRUD page's table-wrapping card, via .fh-glass).
+   !important overrides the bg-white utility class already present on
+   every one of these elements, for the same CDN-injection-order
+   reason as elsewhere in this file. */
+.fh-glass,
+.fh-stat-card,
+.fh-card {
+    background-color: rgba(255, 255, 255, 0.86) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .fh-glass,
+body.dark-mode .fh-stat-card,
+body.dark-mode .fh-card {
+    background-color: rgba(45, 55, 72, 0.72) !important;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* backdrop-filter isn't universally supported -- fall back to a mostly
+   opaque fill (still legible, just not frosted) rather than the
+   default rgba() alone, which would otherwise be too see-through for
+   body text to stay readable without the blur softening what's behind it. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .fh-glass,
+    .fh-stat-card,
+    .fh-card {
+        background-color: rgba(255, 255, 255, 0.92) !important;
+    }
+
+    body.dark-mode .fh-glass,
+    body.dark-mode .fh-stat-card,
+    body.dark-mode .fh-card {
+        background-color: rgba(45, 55, 72, 0.92) !important;
     }
 }
