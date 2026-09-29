@@ -114,5 +114,176 @@ const FarmHubUtil = (function () {
         });
     }
 
-    return { escapeHtml, loadJsonArray, toCsvField, wireModalDismiss };
+    // Mirrors the dashboard's existing swipe-to-pin gesture (same
+    // axis-lock/threshold/offset mechanics) but for the mobile stacked-
+    // list row layout: swipe a row left to reveal a "Delete" action
+    // behind it, which triggers the row's own existing .delete-btn (so
+    // it goes through the same confirmation modal, not an instant
+    // delete). Desktop keeps the plain table with its always-visible
+    // trash icon -- this only wires up below the sm breakpoint, where
+    // .fh-responsive-table turns each row into a swipeable block.
+    function wireSwipeToDeleteRows(tbody) {
+        if (!tbody || !window.matchMedia('(max-width: 639px)').matches) {
+            return;
+        }
+
+        const OPEN_OFFSET = -84;
+        let activeRow = null;
+        let startX = 0;
+        let startY = 0;
+        let baseX = 0;
+        let axisLocked = null;
+        let dragged = false;
+
+        // The row's own td's start as direct children of <tr> (needed for
+        // the plain desktop table markup); wrapping them the first time a
+        // row is actually touched -- rather than up front for every row --
+        // means this never has to re-run after a re-render, since a freshly
+        // rendered <tr> just gets wrapped again on its own first touch.
+        function ensureWrapped(tr) {
+            let content = tr.querySelector(':scope > .fh-row-content');
+            if (content) {
+                return content;
+            }
+            content = document.createElement('div');
+            content.className = 'fh-row-content';
+            while (tr.firstChild) {
+                content.appendChild(tr.firstChild);
+            }
+            const action = document.createElement('button');
+            action.type = 'button';
+            action.className = 'fh-swipe-action';
+            action.textContent = 'Delete';
+            action.tabIndex = -1;
+            action.setAttribute('aria-label', 'Delete');
+            tr.appendChild(action);
+            tr.appendChild(content);
+            return content;
+        }
+
+        function isOpen(tr) {
+            return tr.classList.contains('fh-swiped-open');
+        }
+
+        function closeRow(tr) {
+            const content = tr.querySelector(':scope > .fh-row-content');
+            const action = tr.querySelector(':scope > .fh-swipe-action');
+            tr.classList.remove('fh-swiped-open');
+            if (content) {
+                content.style.transform = '';
+            }
+            if (action) {
+                action.tabIndex = -1;
+            }
+        }
+
+        function closeAllExcept(exceptTr) {
+            tbody.querySelectorAll('tr.fh-swiped-open').forEach((tr) => {
+                if (tr !== exceptTr) {
+                    closeRow(tr);
+                }
+            });
+        }
+
+        tbody.addEventListener('touchstart', (e) => {
+            const tr = e.target.closest('tr');
+            if (!tr || e.target.closest('.fh-swipe-action')) {
+                activeRow = null;
+                return;
+            }
+            const t = e.touches[0];
+            startX = t.clientX;
+            startY = t.clientY;
+            activeRow = tr;
+            baseX = isOpen(tr) ? OPEN_OFFSET : 0;
+            axisLocked = null;
+            dragged = false;
+            const content = ensureWrapped(tr);
+            content.style.transition = 'none';
+        }, { passive: true });
+
+        tbody.addEventListener('touchmove', (e) => {
+            if (!activeRow) {
+                return;
+            }
+            const t = e.touches[0];
+            const dx = t.clientX - startX;
+            const dy = t.clientY - startY;
+
+            if (axisLocked === null) {
+                if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+                    return;
+                }
+                axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+                if (axisLocked === 'x') {
+                    closeAllExcept(activeRow);
+                }
+            }
+            if (axisLocked === 'y') {
+                return;
+            }
+
+            e.preventDefault();
+            let next = baseX + dx;
+            next = Math.max(OPEN_OFFSET - 24, Math.min(0, next));
+            ensureWrapped(activeRow).style.transform = `translateX(${next}px)`;
+            dragged = Math.abs(dx) > 8;
+        }, { passive: false });
+
+        tbody.addEventListener('touchend', () => {
+            if (!activeRow) {
+                return;
+            }
+            const tr = activeRow;
+            const content = tr.querySelector(':scope > .fh-row-content');
+            if (content) {
+                content.style.transition = '';
+            }
+            if (axisLocked === 'x') {
+                const match = content && /translateX\((-?\d+(?:\.\d+)?)px\)/.exec(content.style.transform || '');
+                const value = match ? parseFloat(match[1]) : 0;
+                if (value < OPEN_OFFSET / 2) {
+                    tr.classList.add('fh-swiped-open');
+                    if (content) {
+                        content.style.transform = `translateX(${OPEN_OFFSET}px)`;
+                    }
+                    const action = tr.querySelector(':scope > .fh-swipe-action');
+                    if (action) {
+                        action.tabIndex = 0;
+                    }
+                } else {
+                    closeRow(tr);
+                }
+            }
+            activeRow = null;
+            axisLocked = null;
+        });
+
+        tbody.addEventListener('click', (e) => {
+            const tr = e.target.closest('tr');
+            if (!tr) {
+                return;
+            }
+            if (e.target.closest('.fh-swipe-action')) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeRow(tr);
+                const realDeleteBtn = tr.querySelector('.delete-btn');
+                if (realDeleteBtn) {
+                    realDeleteBtn.click();
+                }
+                return;
+            }
+            if (isOpen(tr)) {
+                if (dragged) {
+                    e.preventDefault();
+                    dragged = false;
+                    return;
+                }
+                closeRow(tr);
+            }
+        });
+    }
+
+    return { escapeHtml, loadJsonArray, toCsvField, wireModalDismiss, wireSwipeToDeleteRows };
 })();

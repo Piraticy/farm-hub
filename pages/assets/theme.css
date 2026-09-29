@@ -164,12 +164,45 @@ body {
     }
 
     .fh-responsive-table tr {
+        position: relative;
+        overflow: hidden;
         padding: 0.75rem 0;
         border-bottom: 1px solid #e5e7eb;
     }
 
     .fh-responsive-table tr:last-child {
         border-bottom: none;
+    }
+
+    /* Swipe-to-delete (wired by FarmHubUtil.wireSwipeToDeleteRows): a row's
+       td's get moved into this wrapper on first touch, so the transform
+       that reveals the delete action can move just the data, not the
+       fixed action button sitting behind it (also a child of the same
+       <tr>, but never itself transformed). Solid background here (not
+       just on the tr) so the red action panel doesn't show through the
+       small gaps between a row's own td's while dragging. */
+    .fh-row-content {
+        display: block;
+        position: relative;
+        z-index: 1;
+        background-color: #ffffff;
+    }
+
+    body.dark-mode .fh-row-content {
+        background-color: #2d3748;
+    }
+
+    .fh-swipe-action {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 84px;
+        border: none;
+        background-color: #dc2626;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.8rem;
     }
 
     .fh-responsive-table td {

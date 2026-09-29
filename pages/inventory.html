@@ -253,6 +253,7 @@
 
         const addItemForm = document.getElementById('addItemForm');
         const inventoryTableBody = document.getElementById('inventoryTableBody');
+        FarmHubUtil.wireSwipeToDeleteRows(inventoryTableBody);
         const loadingMessage = document.getElementById('loadingMessage');
         const noInventoryMessage = document.getElementById('noInventoryMessage');
         const downloadBtn = document.getElementById('downloadBtn');
