@@ -142,14 +142,24 @@
             </div>
         </div>
 
-        <!-- Add New Transaction Section -->
-        <details class="bg-white rounded-2xl shadow-lg p-5 mb-6 max-w-2xl mx-auto">
-            <summary class="flex justify-between items-center cursor-pointer text-2xl font-semibold text-gray-800 mb-3 focus:outline-none">
-                <span>Add New Transaction</span>
-                <svg class="details-summary-icon w-6 h-6 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </summary>
+        <!-- Add New Transaction Trigger -->
+        <div class="flex flex-col items-end gap-2 mb-6">
+            <button type="button" id="openAddTransactionModalBtn" class="fh-ripple inline-flex items-center gap-2 py-2.5 px-5 rounded-lg shadow-sm text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                Add New Transaction
+            </button>
+            <div id="statusMessage" class="text-sm text-center"></div>
+        </div>
+
+        <!-- Add Transaction Modal -->
+        <div id="addTransactionModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 invisible opacity-0">
+        <div class="fh-glass bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-semibold text-gray-800">Add New Transaction</h3>
+                <button type="button" id="closeAddTransactionModalBtn" aria-label="Close" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
             <form id="addTransactionForm" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
@@ -223,12 +233,12 @@
                 <div class="sm:col-span-2">
                     <button type="submit" class="w-full py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">Add Transaction</button>
                 </div>
-                <div id="statusMessage" class="sm:col-span-2 text-sm text-center"></div>
             </form>
-        </details>
+        </div>
+        </div>
 
         <!-- Current Transactions Table Section -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="fh-glass bg-white rounded-2xl shadow-lg p-6">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4">
                 <h2 class="text-2xl font-semibold text-gray-800">Recent Transactions</h2>
                 <button id="downloadBtn" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">Download Data</button>
@@ -264,7 +274,7 @@
 
     <!-- Edit Transaction Modal -->
     <div id="editModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 invisible opacity-0">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 m-4">
+        <div class="fh-glass bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 m-4">
             <h3 class="text-2xl font-semibold mb-4 text-gray-800">Edit Transaction</h3>
             <form id="editTransactionForm" class="space-y-4">
                 <input type="hidden" id="editTransactionId">
@@ -305,7 +315,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 invisible opacity-0">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 m-4">
+        <div class="fh-glass bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 m-4">
             <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
             <p class="text-gray-600 mb-6">Are you sure you want to delete this transaction? This action cannot be undone.</p>
             <div class="flex justify-end space-x-4">
@@ -347,6 +357,9 @@
             const transactionDateError = document.getElementById('transactionDateError');
 
             // Modal elements
+            const addTransactionModal = document.getElementById('addTransactionModal');
+            const openAddTransactionModalBtn = document.getElementById('openAddTransactionModalBtn');
+            const closeAddTransactionModalBtn = document.getElementById('closeAddTransactionModalBtn');
             const editModal = document.getElementById('editModal');
             const editTransactionForm = document.getElementById('editTransactionForm');
             const closeEditModalBtn = document.getElementById('closeEditModalBtn');
@@ -355,6 +368,7 @@
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
             // Backdrop click and Escape both dismiss these modals, matching the mobile nav dropdown.
+            FarmHubUtil.wireModalDismiss(addTransactionModal, closeAddTransactionModalBtn);
             FarmHubUtil.wireModalDismiss(editModal, closeEditModalBtn);
             FarmHubUtil.wireModalDismiss(deleteModal, cancelDeleteBtn);
             let docIdToDelete = null;
@@ -368,6 +382,9 @@
                 modalElement.classList.remove('visible', 'opacity-100');
                 modalElement.classList.add('invisible', 'opacity-0');
             };
+
+            openAddTransactionModalBtn.addEventListener('click', () => showModal(addTransactionModal));
+            closeAddTransactionModalBtn.addEventListener('click', () => hideModal(addTransactionModal));
 
             FarmHubDatePicker.init('[data-datepicker]');
 
@@ -685,6 +702,7 @@
 
                     // Manually reset the form fields to a clean state
                     resetForm();
+                    hideModal(addTransactionModal);
 
                     if (statusMessage) {
                         statusMessage.textContent = '✅ Transaction added successfully!';
