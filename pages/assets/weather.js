@@ -1,4 +1,4 @@
-// Clock + weather widget shared by login.html and index.html.
+// Clock + weather widget for login.html.
 // Weather comes from Open-Meteo (https://open-meteo.com) — free, no API
 // key required. Location is either the browser's geolocation or a city
 // the user searches for, and is remembered in localStorage.
